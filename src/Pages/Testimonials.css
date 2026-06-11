@@ -1,0 +1,528 @@
+.testimonials-page {
+  padding: 40px 0 100px;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.testimonials-page .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ─── BANNER ─── */
+.test-banner {
+  background: linear-gradient(135deg, #5c45bf 0%, #7c5ce7 50%, #9b7efd 100%);
+  border-radius: 24px;
+  padding: 48px 40px;
+  margin-bottom: 48px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.test-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.test-banner::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -10%;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.test-banner h1 {
+  font-size: 42px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.test-banner p {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0 0 20px;
+  line-height: 1.6;
+  position: relative;
+  z-index: 1;
+}
+
+.test-banner .breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 10px 24px;
+  border-radius: 50px;
+  position: relative;
+  z-index: 1;
+}
+
+.test-banner .breadcrumb-item {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.test-banner .breadcrumb-item a {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.test-banner .breadcrumb-item a:hover {
+  color: #fff;
+}
+
+.test-banner .breadcrumb-item.active {
+  color: #fff;
+  font-weight: 600;
+}
+
+.test-banner .breadcrumb-item + .breadcrumb-item::before {
+  color: rgba(255, 255, 255, 0.5);
+  content: '/';
+  padding-right: 8px;
+}
+
+/* ─── BENEFITS ─── */
+.test-benefits {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  background: #fefce8;
+  border-radius: 20px;
+  padding: 28px 32px;
+  margin-bottom: 40px;
+}
+
+.test-benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.test-benefit-item figure {
+  margin: 0;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.test-benefit-item img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.test-benefit-item h6 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f0200;
+  margin: 0 0 3px;
+}
+
+.test-benefit-item p {
+  font-size: 12px;
+  color: #888;
+  margin: 0;
+}
+
+/* ─── CAROUSEL ─── */
+.test-carousel-section {
+  background: linear-gradient(135deg, #5c45bf 0%, #7c5ce7 50%, #9b7efd 100%);
+  border-radius: 24px;
+  padding: 48px 40px;
+  margin-bottom: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.test-carousel-header {
+  text-align: center;
+  margin-bottom: 32px;
+  position: relative;
+  z-index: 1;
+}
+
+.test-special {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fdf485;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+}
+
+.test-carousel-header h2 {
+  font-size: 32px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+}
+
+.test-carousel-body {
+  max-width: 720px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.test-quote-left,
+.test-quote-right {
+  position: absolute;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+.test-quote-left {
+  top: -10px;
+  left: -20px;
+  width: 50px;
+}
+
+.test-quote-right {
+  bottom: -10px;
+  right: -20px;
+  width: 50px;
+}
+
+.test-review-box {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.test-review-box figure {
+  margin: 0 0 20px;
+}
+
+.test-review-box p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  font-style: italic;
+}
+
+.test-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.test-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid transparent;
+  border-radius: 50px;
+  padding: 8px 16px 8px 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+
+.test-indicator:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.test-indicator.active {
+  border-color: #fdf485;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.test-indicator figure {
+  margin: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.test-indicator img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.test-indicator .test-client-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 2px;
+  text-align: left;
+}
+
+.test-indicator span {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  display: block;
+  text-align: left;
+}
+
+.test-nav {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.test-nav-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.test-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #fff;
+}
+
+/* ─── BLOG ─── */
+.test-blog-section {
+  margin-bottom: 40px;
+}
+
+.test-blog-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.test-blog-header h2 {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0f0200;
+  margin: 0;
+}
+
+.test-blog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.test-blog-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.test-blog-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+.test-blog-img {
+  overflow: hidden;
+}
+
+.test-blog-img figure {
+  margin: 0;
+}
+
+.test-blog-img img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s;
+}
+
+.test-blog-card:hover .test-blog-img img {
+  transform: scale(1.05);
+}
+
+.test-blog-body {
+  padding: 20px 24px 24px;
+}
+
+.test-blog-body a {
+  text-decoration: none;
+}
+
+.test-blog-body h4 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f0200;
+  margin: 0 0 10px;
+  line-height: 1.4;
+  transition: color 0.3s;
+}
+
+.test-blog-body a:hover h4 {
+  color: #5c45bf;
+}
+
+.test-blog-body p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #777;
+  margin: 0;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1024px) {
+  .test-benefits {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .test-blog-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .testimonials-page {
+    padding: 20px 0 60px;
+  }
+
+  .test-banner {
+    padding: 32px 24px;
+    border-radius: 18px;
+    margin-bottom: 32px;
+  }
+
+  .test-banner h1 {
+    font-size: 28px;
+  }
+
+  .test-banner p br {
+    display: none;
+  }
+
+  .test-benefits {
+    grid-template-columns: 1fr 1fr;
+    padding: 20px;
+    gap: 16px;
+  }
+
+  .test-benefit-item {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .test-carousel-section {
+    padding: 32px 24px;
+  }
+
+  .test-carousel-header h2 {
+    font-size: 24px;
+  }
+
+  .test-indicators {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .test-review-box p {
+    font-size: 14px;
+  }
+
+  .test-blog-header h2 {
+    font-size: 24px;
+  }
+
+  .test-blog-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .test-blog-img img {
+    height: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .test-banner {
+    padding: 24px 16px;
+  }
+
+  .test-banner h1 {
+    font-size: 24px;
+  }
+
+  .test-banner p {
+    font-size: 14px;
+  }
+
+  .test-benefits {
+    grid-template-columns: 1fr 1fr;
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .test-benefit-item figure {
+    width: 36px;
+    height: 36px;
+  }
+
+  .test-benefit-item h6 {
+    font-size: 12px;
+  }
+
+  .test-benefit-item p {
+    font-size: 11px;
+  }
+
+  .test-carousel-section {
+    padding: 24px 16px;
+  }
+
+  .test-carousel-header h2 {
+    font-size: 20px;
+  }
+
+  .test-quote-left,
+  .test-quote-right {
+    display: none;
+  }
+
+  .test-indicator {
+    padding: 6px 12px 6px 6px;
+  }
+
+  .test-indicator figure {
+    width: 36px;
+    height: 36px;
+  }
+
+  .test-blog-body {
+    padding: 16px 18px 20px;
+  }
+
+  .test-blog-body h4 {
+    font-size: 15px;
+  }
+}

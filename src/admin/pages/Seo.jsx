@@ -1,0 +1,200 @@
+import { useEffect, useState } from 'react'
+import API from '../../utils/api'
+
+const API_BASE = 'http://localhost:5000'
+
+function AdminSeo() {
+  const [seo, setSeo] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [iconFile, setIconFile] = useState(null)
+  const [iconPreview, setIconPreview] = useState('')
+  const [ogFile, setOgFile] = useState(null)
+  const [ogPreview, setOgPreview] = useState('')
+  const [message, setMessage] = useState({ type: '', text: '' })
+
+  const [form, setForm] = useState({
+    siteTitle: '',
+    siteDescription: '',
+    siteKeywords: '',
+    ogTitle: '',
+    ogDescription: '',
+    footerText: '',
+  })
+
+  useEffect(() => {
+    const fetchSeo = async () => {
+      try {
+        const { data } = await API.get('/seo')
+        if (data.seo) {
+          setSeo(data.seo)
+          setForm({
+            siteTitle: data.seo.siteTitle || '',
+            siteDescription: data.seo.siteDescription || '',
+            siteKeywords: data.seo.siteKeywords || '',
+            ogTitle: data.seo.ogTitle || '',
+            ogDescription: data.seo.ogDescription || '',
+            footerText: data.seo.footerText || '',
+          })
+          if (data.seo.siteIcon) {
+            setIconPreview(`${API_BASE}${data.seo.siteIcon}`)
+          }
+          if (data.seo.ogImage) {
+            setOgPreview(`${API_BASE}${data.seo.ogImage}`)
+          }
+        }
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchSeo()
+  }, [])
+
+  const handleChange = (e) => {
+    setForm(p => ({ ...p, [e.target.name]: e.target.value }))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setSaving(true)
+    setMessage({ type: '', text: '' })
+    try {
+      await API.put('/admin/seo', form)
+      setMessage({ type: 'success', text: 'SEO settings saved successfully!' })
+
+      if (iconFile) {
+        const iconData = new FormData()
+        iconData.append('icon', iconFile)
+        await API.post('/admin/seo/upload-icon', iconData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+      }
+      if (ogFile) {
+        const ogData = new FormData()
+        ogData.append('ogImage', ogFile)
+        await API.post('/admin/seo/upload-og-image', ogData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+      }
+
+      const { data } = await API.get('/seo')
+      if (data.seo) {
+        setSeo(data.seo)
+        if (data.seo.siteIcon) setIconPreview(`${API_BASE}${data.seo.siteIcon}`)
+        if (data.seo.ogImage) setOgPreview(`${API_BASE}${data.seo.ogImage}`)
+      }
+      setIconFile(null)
+      setOgFile(null)
+    } catch (err) {
+      setMessage({ type: 'error', text: err.response?.data?.message || 'Failed to save SEO settings' })
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (loading) return <div className="admin-loading">Loading SEO settings...</div>
+
+  return (
+    <div>
+      <div className="admin-page-header">
+        <h1>SEO Settings</h1>
+      </div>
+
+      {message.text && (
+        <div style={{
+          padding: '12px 16px',
+          borderRadius: 8,
+          marginBottom: 20,
+          fontSize: 14,
+          fontWeight: 600,
+          background: message.type === 'success' ? '#d1fae5' : '#fee2e2',
+          color: message.type === 'success' ? '#065f46' : '#dc2626',
+        }}>
+          {message.text}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit}>
+        <div className="admin-form-card" style={{ marginBottom: 24 }}>
+          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20, color: '#111827' }}>Site Identity</h2>
+
+          <div className="admin-form-group" style={{ marginBottom: 16 }}>
+            <label>Site Icon / Favicon</label>
+            <input type="file" accept="image/*" onChange={(e) => {
+              const f = e.target.files[0]
+              if (f) { setIconFile(f); setIconPreview(URL.createObjectURL(f)) }
+            }} />
+            {iconPreview && (
+              <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 10 }}>
+                <img src={iconPreview} alt="icon preview" style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 8, border: '1px solid #e5e7eb' }} />
+                <span style={{ fontSize: 12, color: '#6b7280' }}>Current icon</span>
+              </div>
+            )}
+          </div>
+
+          <div className="admin-form-group" style={{ marginBottom: 16 }}>
+            <label>Site Title <span style={{ color: '#9ca3af', fontSize: 12 }}>(browser tab title)</span></label>
+            <input name="siteTitle" value={form.siteTitle} onChange={handleChange} placeholder="Pharmez - Online Pharmacy" />
+          </div>
+
+          <div className="admin-form-group" style={{ marginBottom: 16 }}>
+            <label>Meta Description <span style={{ color: '#9ca3af', fontSize: 12 }}>(max 320 chars)</span></label>
+            <textarea name="siteDescription" value={form.siteDescription} onChange={handleChange} rows={3} placeholder="Brief description of your site..." maxLength={320} />
+            <span style={{ fontSize: 11, color: '#9ca3af', textAlign: 'right' }}>{form.siteDescription.length}/320</span>
+          </div>
+
+          <div className="admin-form-group" style={{ marginBottom: 16 }}>
+            <label>Meta Keywords <span style={{ color: '#9ca3af', fontSize: 12 }}>(comma separated)</span></label>
+            <input name="siteKeywords" value={form.siteKeywords} onChange={handleChange} placeholder="pharmacy, online pharmacy, medicines" />
+          </div>
+        </div>
+
+        <div className="admin-form-card" style={{ marginBottom: 24 }}>
+          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20, color: '#111827' }}>Open Graph (Social Sharing)</h2>
+
+          <div className="admin-form-group" style={{ marginBottom: 16 }}>
+            <label>OG Image <span style={{ color: '#9ca3af', fontSize: 12 }}>(1200x630 recommended)</span></label>
+            <input type="file" accept="image/*" onChange={(e) => {
+              const f = e.target.files[0]
+              if (f) { setOgFile(f); setOgPreview(URL.createObjectURL(f)) }
+            }} />
+            {ogPreview && (
+              <div style={{ marginTop: 8 }}>
+                <img src={ogPreview} alt="og preview" style={{ width: 240, height: 126, objectFit: 'cover', borderRadius: 8, border: '1px solid #e5e7eb' }} />
+              </div>
+            )}
+          </div>
+
+          <div className="admin-form-group" style={{ marginBottom: 16 }}>
+            <label>OG Title <span style={{ color: '#9ca3af', fontSize: 12 }}>(leave empty to use Site Title)</span></label>
+            <input name="ogTitle" value={form.ogTitle} onChange={handleChange} placeholder="Same as site title if left empty" />
+          </div>
+
+          <div className="admin-form-group" style={{ marginBottom: 16 }}>
+            <label>OG Description <span style={{ color: '#9ca3af', fontSize: 12 }}>(leave empty to use Site Description)</span></label>
+            <textarea name="ogDescription" value={form.ogDescription} onChange={handleChange} rows={2} placeholder="Same as site description if left empty" maxLength={320} />
+          </div>
+        </div>
+
+        <div className="admin-form-card" style={{ marginBottom: 24 }}>
+          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20, color: '#111827' }}>Footer</h2>
+
+          <div className="admin-form-group" style={{ marginBottom: 16 }}>
+            <label>Footer Text <span style={{ color: '#9ca3af', fontSize: 12 }}>(copyright / branding)</span></label>
+            <input name="footerText" value={form.footerText} onChange={handleChange} placeholder="© 2025 Pharmez. All rights reserved." />
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: 12 }}>
+          <button type="submit" className="admin-btn admin-btn-primary" disabled={saving}>
+            {saving ? 'Saving...' : 'Save SEO Settings'}
+          </button>
+        </div>
+      </form>
+    </div>
+  )
+}
+
+export default AdminSeo
