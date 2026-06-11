@@ -40,26 +40,40 @@ function AdminOrders() {
   return (
     <div>
       <div className="admin-page-header">
-        <h1>Orders ({total})</h1>
+        <h1><i className="fa-solid fa-truck" style={{ marginRight: 10, color: 'var(--primary)' }} />Orders ({total})</h1>
       </div>
 
       <div className="admin-table-card">
         <div className="admin-search-bar">
+          <i className="fa-solid fa-filter" style={{ color: 'var(--text-light)' }} />
           <select
             value={filterStatus}
             onChange={(e) => { setFilterStatus(e.target.value); setPage(1) }}
-            style={{ padding: '8px 14px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14 }}
           >
             {STATUS_OPTIONS.map((s) => (
-              <option key={s} value={s}>{s === '' ? 'All Status' : s.charAt(0).toUpperCase() + s.slice(1)}</option>
+              <option key={s} value={s}>{s === '' ? '📋 All Statuses' : s.charAt(0).toUpperCase() + s.slice(1)}</option>
             ))}
           </select>
+          {filterStatus && (
+            <button
+              onClick={() => { setFilterStatus(''); setPage(1) }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-light)', fontSize: 13 }}
+            >
+              <i className="fa-solid fa-xmark" /> Clear
+            </button>
+          )}
         </div>
 
         {loading ? (
-          <div className="admin-loading">Loading orders...</div>
+          <div className="admin-loading">
+            <div className="admin-loader" />
+            <div>Loading orders...</div>
+          </div>
         ) : orders.length === 0 ? (
-          <div className="admin-empty">No orders found.</div>
+          <div className="admin-empty">
+            <i className="fa-solid fa-inbox" style={{ fontSize: 32, display: 'block', marginBottom: 8, color: 'var(--text-light)' }} />
+            No orders found.
+          </div>
         ) : (
           <>
             <table className="admin-table">
@@ -78,23 +92,31 @@ function AdminOrders() {
               <tbody>
                 {orders.map((order) => (
                   <tr key={order._id}>
-                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>#{order._id.slice(-8).toUpperCase()}</td>
+                    <td style={{ fontFamily: 'monospace', fontSize: 12, color: 'var(--text-secondary)' }}>
+                      #{order._id.slice(-8).toUpperCase()}
+                    </td>
                     <td>
-                      <div style={{ fontWeight: 600 }}>{order.user?.name || order.shippingAddress?.firstName}</div>
-                      <div style={{ fontSize: 12, color: '#6b7280' }}>{order.user?.email || order.shippingAddress?.email}</div>
+                      <div style={{ fontWeight: 600 }}>{order.user?.name || order.shippingAddress?.firstName || 'N/A'}</div>
+                      <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{order.user?.email || order.shippingAddress?.email}</div>
                     </td>
                     <td style={{ fontSize: 13 }}>{order.orderItems?.length} item(s)</td>
-                    <td style={{ fontWeight: 600 }}>${order.totalPrice?.toFixed(2)}</td>
-                    <td style={{ fontSize: 13, textTransform: 'capitalize' }}>{order.paymentMethod}</td>
+                    <td style={{ fontWeight: 700 }}>${order.totalPrice?.toFixed(2)}</td>
+                    <td style={{ fontSize: 13, textTransform: 'capitalize' }}>
+                      <i className="fa-solid fa-credit-card" style={{ marginRight: 5, color: 'var(--text-light)' }} />
+                      {order.paymentMethod}
+                    </td>
                     <td>
                       <span className={`status-badge ${STATUS_COLORS[order.orderStatus] || ''}`}>
                         {order.orderStatus}
                       </span>
                     </td>
-                    <td style={{ fontSize: 13, color: '#6b7280' }}>{new Date(order.createdAt).toLocaleDateString()}</td>
+                    <td style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+                      <i className="fa-regular fa-calendar" style={{ marginRight: 5 }} />
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </td>
                     <td>
-                      <Link to={`/admin/orders/${order._id}`} className="admin-btn admin-btn-outline admin-btn-sm">
-                        View
+                      <Link to={`/admin/orders/${order._id}`} className="admin-btn admin-btn-outline admin-btn-xs">
+                        <i className="fa-solid fa-eye" /> View
                       </Link>
                     </td>
                   </tr>
@@ -104,11 +126,15 @@ function AdminOrders() {
 
             {totalPages > 1 && (
               <div className="admin-pagination">
-                <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>← Prev</button>
+                <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>
+                  <i className="fa-solid fa-chevron-left" />
+                </button>
                 {Array.from({ length: totalPages }, (_, i) => (
                   <button key={i + 1} className={page === i + 1 ? 'active' : ''} onClick={() => setPage(i + 1)}>{i + 1}</button>
                 ))}
-                <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)}>Next →</button>
+                <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)}>
+                  <i className="fa-solid fa-chevron-right" />
+                </button>
               </div>
             )}
           </>

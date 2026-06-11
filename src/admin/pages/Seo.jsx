@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
 import API from '../../utils/api'
 
-const API_BASE = 'http://localhost:5000'
-
 function AdminSeo() {
   const [seo, setSeo] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -36,12 +34,8 @@ function AdminSeo() {
             ogDescription: data.seo.ogDescription || '',
             footerText: data.seo.footerText || '',
           })
-          if (data.seo.siteIcon) {
-            setIconPreview(`${API_BASE}${data.seo.siteIcon}`)
-          }
-          if (data.seo.ogImage) {
-            setOgPreview(`${API_BASE}${data.seo.ogImage}`)
-          }
+          if (data.seo.siteIcon) setIconPreview(`${import.meta.env.VITE_API_URL}${data.seo.siteIcon}`)
+          if (data.seo.ogImage) setOgPreview(`${import.meta.env.VITE_API_URL}${data.seo.ogImage}`)
         }
       } catch (err) {
         console.error(err)
@@ -82,8 +76,8 @@ function AdminSeo() {
       const { data } = await API.get('/seo')
       if (data.seo) {
         setSeo(data.seo)
-        if (data.seo.siteIcon) setIconPreview(`${API_BASE}${data.seo.siteIcon}`)
-        if (data.seo.ogImage) setOgPreview(`${API_BASE}${data.seo.ogImage}`)
+        if (data.seo.siteIcon) setIconPreview(`${import.meta.env.VITE_API_URL}${data.seo.siteIcon}`)
+        if (data.seo.ogImage) setOgPreview(`${import.meta.env.VITE_API_URL}${data.seo.ogImage}`)
       }
       setIconFile(null)
       setOgFile(null)
@@ -94,31 +88,31 @@ function AdminSeo() {
     }
   }
 
-  if (loading) return <div className="admin-loading">Loading SEO settings...</div>
+  if (loading) return (
+    <div className="admin-loading">
+      <div className="admin-loader" />
+      <div>Loading SEO settings...</div>
+    </div>
+  )
 
   return (
     <div>
       <div className="admin-page-header">
-        <h1>SEO Settings</h1>
+        <h1><i className="fa-solid fa-magnifying-glass-chart" style={{ marginRight: 10, color: 'var(--primary)' }} />SEO Settings</h1>
       </div>
 
       {message.text && (
-        <div style={{
-          padding: '12px 16px',
-          borderRadius: 8,
-          marginBottom: 20,
-          fontSize: 14,
-          fontWeight: 600,
-          background: message.type === 'success' ? '#d1fae5' : '#fee2e2',
-          color: message.type === 'success' ? '#065f46' : '#dc2626',
-        }}>
+        <div className={`admin-toast admin-toast-${message.type}`}>
+          <i className={`fa-solid ${message.type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}`} />
           {message.text}
         </div>
       )}
 
       <form onSubmit={handleSubmit}>
         <div className="admin-form-card" style={{ marginBottom: 24 }}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20, color: '#111827' }}>Site Identity</h2>
+          <div className="admin-section-title">
+            <i className="fa-solid fa-hospital" /> Site Identity
+          </div>
 
           <div className="admin-form-group" style={{ marginBottom: 16 }}>
             <label>Site Icon / Favicon</label>
@@ -128,70 +122,73 @@ function AdminSeo() {
             }} />
             {iconPreview && (
               <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 10 }}>
-                <img src={iconPreview} alt="icon preview" style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 8, border: '1px solid #e5e7eb' }} />
-                <span style={{ fontSize: 12, color: '#6b7280' }}>Current icon</span>
+                <img src={iconPreview} alt="icon preview" style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 8, border: '1px solid var(--border)' }} />
+                <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Current icon</span>
               </div>
             )}
           </div>
 
           <div className="admin-form-group" style={{ marginBottom: 16 }}>
-            <label>Site Title <span style={{ color: '#9ca3af', fontSize: 12 }}>(browser tab title)</span></label>
+            <label>Site Title <span style={{ color: 'var(--text-light)', fontSize: 12 }}>(browser tab title)</span></label>
             <input name="siteTitle" value={form.siteTitle} onChange={handleChange} placeholder="Pharmez - Online Pharmacy" />
           </div>
 
           <div className="admin-form-group" style={{ marginBottom: 16 }}>
-            <label>Meta Description <span style={{ color: '#9ca3af', fontSize: 12 }}>(max 320 chars)</span></label>
+            <label>Meta Description <span style={{ color: 'var(--text-light)', fontSize: 12 }}>(max 320 chars)</span></label>
             <textarea name="siteDescription" value={form.siteDescription} onChange={handleChange} rows={3} placeholder="Brief description of your site..." maxLength={320} />
-            <span style={{ fontSize: 11, color: '#9ca3af', textAlign: 'right' }}>{form.siteDescription.length}/320</span>
+            <span style={{ fontSize: 11, color: 'var(--text-light)', textAlign: 'right' }}>{form.siteDescription.length}/320</span>
           </div>
 
           <div className="admin-form-group" style={{ marginBottom: 16 }}>
-            <label>Meta Keywords <span style={{ color: '#9ca3af', fontSize: 12 }}>(comma separated)</span></label>
+            <label>Meta Keywords <span style={{ color: 'var(--text-light)', fontSize: 12 }}>(comma separated)</span></label>
             <input name="siteKeywords" value={form.siteKeywords} onChange={handleChange} placeholder="pharmacy, online pharmacy, medicines" />
           </div>
         </div>
 
         <div className="admin-form-card" style={{ marginBottom: 24 }}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20, color: '#111827' }}>Open Graph (Social Sharing)</h2>
+          <div className="admin-section-title">
+            <i className="fa-solid fa-share-nodes" /> Open Graph (Social Sharing)
+          </div>
 
           <div className="admin-form-group" style={{ marginBottom: 16 }}>
-            <label>OG Image <span style={{ color: '#9ca3af', fontSize: 12 }}>(1200x630 recommended)</span></label>
+            <label>OG Image <span style={{ color: 'var(--text-light)', fontSize: 12 }}>(1200x630 recommended)</span></label>
             <input type="file" accept="image/*" onChange={(e) => {
               const f = e.target.files[0]
               if (f) { setOgFile(f); setOgPreview(URL.createObjectURL(f)) }
             }} />
             {ogPreview && (
               <div style={{ marginTop: 8 }}>
-                <img src={ogPreview} alt="og preview" style={{ width: 240, height: 126, objectFit: 'cover', borderRadius: 8, border: '1px solid #e5e7eb' }} />
+                <img src={ogPreview} alt="og preview" style={{ width: 240, height: 126, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--border)' }} />
               </div>
             )}
           </div>
 
           <div className="admin-form-group" style={{ marginBottom: 16 }}>
-            <label>OG Title <span style={{ color: '#9ca3af', fontSize: 12 }}>(leave empty to use Site Title)</span></label>
+            <label>OG Title <span style={{ color: 'var(--text-light)', fontSize: 12 }}>(leave empty to use Site Title)</span></label>
             <input name="ogTitle" value={form.ogTitle} onChange={handleChange} placeholder="Same as site title if left empty" />
           </div>
 
           <div className="admin-form-group" style={{ marginBottom: 16 }}>
-            <label>OG Description <span style={{ color: '#9ca3af', fontSize: 12 }}>(leave empty to use Site Description)</span></label>
+            <label>OG Description <span style={{ color: 'var(--text-light)', fontSize: 12 }}>(leave empty to use Site Description)</span></label>
             <textarea name="ogDescription" value={form.ogDescription} onChange={handleChange} rows={2} placeholder="Same as site description if left empty" maxLength={320} />
           </div>
         </div>
 
         <div className="admin-form-card" style={{ marginBottom: 24 }}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20, color: '#111827' }}>Footer</h2>
+          <div className="admin-section-title">
+            <i className="fa-solid fa-rectangle-ad" /> Footer
+          </div>
 
           <div className="admin-form-group" style={{ marginBottom: 16 }}>
-            <label>Footer Text <span style={{ color: '#9ca3af', fontSize: 12 }}>(copyright / branding)</span></label>
+            <label>Footer Text <span style={{ color: 'var(--text-light)', fontSize: 12 }}>(copyright / branding)</span></label>
             <input name="footerText" value={form.footerText} onChange={handleChange} placeholder="© 2025 Pharmez. All rights reserved." />
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: 12 }}>
-          <button type="submit" className="admin-btn admin-btn-primary" disabled={saving}>
-            {saving ? 'Saving...' : 'Save SEO Settings'}
-          </button>
-        </div>
+        <button type="submit" className="admin-btn admin-btn-primary" disabled={saving}>
+          <i className={`fa-solid ${saving ? 'fa-spinner fa-spin' : 'fa-floppy-disk'}`} />
+          {saving ? 'Saving...' : 'Save SEO Settings'}
+        </button>
       </form>
     </div>
   )

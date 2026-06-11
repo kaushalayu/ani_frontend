@@ -4,9 +4,9 @@ import { useCart } from '../Context/CartContext'
 import { useWishlist } from '../Context/WishlistContext'
 import { useAuth } from '../Context/AuthContext'
 import { useToast } from '../Components/Toast'
-import { useSingleProduct } from '../hooks/useProducts'
+import { useSingleProduct, useProducts } from '../hooks/useProducts'
 import ProductCard from '../Components/ProductCard'
-import { useProducts } from '../hooks/useProducts'
+import API from '../utils/api'
 import './SingleProduct.css'
 
 function SingleProduct() {
@@ -52,7 +52,7 @@ function SingleProduct() {
   const displayOldPrice = currentOption ? currentOption.oldPrice : product.oldPrice || 0
 
   const imgSrc = product.image?.startsWith('/uploads')
-    ? `http://localhost:5000${product.image}`
+    ? `${import.meta.env.VITE_API_URL}${product.image}`
     : product.image || '/assets/images/best-product1.png'
 
   const isInWishlist = wishlist.find((w) => w.id === product._id)
@@ -279,7 +279,24 @@ function SingleProduct() {
             <div className="sp-review-form">
               <h4>Write a Review</h4>
               {isLoggedIn ? (
-                <form onSubmit={(e) => e.preventDefault()}>
+                <form onSubmit={async (e) => {
+                  e.preventDefault()
+                  if (!reviewStars || !reviewComment.trim()) {
+                    addToast('Please select rating and write a review', 'info')
+                    return
+                  }
+                  try {
+                    await API.post(`/products/${product._id}/reviews`, {
+                      rating: reviewStars,
+                      comment: reviewComment,
+                    })
+                    addToast('Review submitted!', 'cart')
+                    setReviewStars(0)
+                    setReviewComment('')
+                  } catch (err) {
+                    addToast(err.response?.data?.message || 'Failed to submit review', 'info')
+                  }
+                }}>
                   <div className="sp-review-form-group">
                     <label>Rating</label>
                     <div className="sp-review-star-select">
@@ -325,7 +342,7 @@ function SingleProduct() {
                 .slice(0, 8)
                 .map((prod) => {
                   const pImg = prod.image?.startsWith('/uploads')
-                    ? `http://localhost:5000${prod.image}`
+                    ? `${import.meta.env.VITE_API_URL}${prod.image}`
                     : prod.image || '/assets/images/best-product1.png'
                   const pPrice = prod.hasPillsOptions && prod.pillsOptions?.[0]
                     ? prod.pillsOptions[0].price

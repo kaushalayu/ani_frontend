@@ -135,7 +135,7 @@ function Cart() {
                   <div className="cart-item-product">
                     <div className="cart-item-image">
                       <img
-                        src={item.img?.startsWith('/uploads') ? `http://localhost:5000${item.img}` : item.img}
+                        src={item.img?.startsWith('/uploads') ? `${import.meta.env.VITE_API_URL}${item.img}` : item.img}
                         alt={item.name}
                       />
                     </div>

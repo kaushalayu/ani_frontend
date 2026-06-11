@@ -31,30 +31,37 @@ function Dashboard() {
     fetchStats()
   }, [])
 
-  if (loading) return <div className="admin-loading">Loading dashboard...</div>
+  if (loading) return (
+    <div className="admin-loading">
+      <div className="admin-loader" />
+      <div>Loading dashboard...</div>
+    </div>
+  )
 
   const statCards = [
-    { label: 'Total Orders', value: stats?.totalOrders ?? 0, icon: '📦', bg: '#dbeafe', color: '#1d4ed8' },
-    { label: 'Total Revenue', value: `$${(stats?.totalRevenue ?? 0).toFixed(2)}`, icon: '💰', bg: '#d1fae5', color: '#065f46' },
-    { label: 'Total Users', value: stats?.totalUsers ?? 0, icon: '👥', bg: '#ede9fe', color: '#6d28d9' },
-    { label: 'Products', value: stats?.totalProducts ?? 0, icon: '💊', bg: '#fce7f3', color: '#9d174d' },
-    { label: 'Pending Orders', value: stats?.pendingOrders ?? 0, icon: '⏳', bg: '#fef3c7', color: '#92400e' },
-    { label: 'Delivered', value: stats?.deliveredOrders ?? 0, icon: '✅', bg: '#d1fae5', color: '#065f46' },
+    { label: 'Total Orders', value: stats?.totalOrders ?? 0, icon: 'fa-solid fa-box', bg: '#ede9fe', color: '#6d28d9' },
+    { label: 'Total Revenue', value: `$${(stats?.totalRevenue ?? 0).toFixed(2)}`, icon: 'fa-solid fa-dollar-sign', bg: '#d1fae5', color: '#065f46' },
+    { label: 'Total Users', value: stats?.totalUsers ?? 0, icon: 'fa-solid fa-users', bg: '#dbeafe', color: '#1d4ed8' },
+    { label: 'Products', value: stats?.totalProducts ?? 0, icon: 'fa-solid fa-capsules', bg: '#fce7f3', color: '#9d174d' },
+    { label: 'Pending Orders', value: stats?.pendingOrders ?? 0, icon: 'fa-solid fa-clock', bg: '#fef3c7', color: '#92400e' },
+    { label: 'Delivered', value: stats?.deliveredOrders ?? 0, icon: 'fa-solid fa-circle-check', bg: '#d1fae5', color: '#065f46' },
   ]
 
   return (
     <div>
       <div className="admin-page-header">
         <h1>Dashboard</h1>
-        <span style={{ fontSize: 13, color: '#6b7280' }}>Welcome back, Admin!</span>
+        <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+          <i className="fa-solid fa-hand-wave" style={{ marginRight: 6 }} />
+          Welcome back, Admin!
+        </span>
       </div>
 
-      {/* Stats */}
       <div className="admin-stats-grid">
         {statCards.map((card) => (
           <div className="admin-stat-card" key={card.label}>
             <div className="admin-stat-icon" style={{ background: card.bg, color: card.color }}>
-              {card.icon}
+              <i className={card.icon} />
             </div>
             <div className="admin-stat-info">
               <h3>{card.value}</h3>
@@ -64,14 +71,18 @@ function Dashboard() {
         ))}
       </div>
 
-      {/* Recent Orders */}
       <div className="admin-table-card">
         <div className="admin-table-header">
-          <h2>Recent Orders</h2>
-          <Link to="/admin/orders" className="admin-btn admin-btn-outline admin-btn-sm">View All</Link>
+          <h2><i className="fa-solid fa-clock-rotate-left" style={{ marginRight: 8, color: 'var(--primary)' }} />Recent Orders</h2>
+          <Link to="/admin/orders" className="admin-btn admin-btn-outline admin-btn-sm">
+            View All <i className="fa-solid fa-arrow-right" />
+          </Link>
         </div>
         {recentOrders.length === 0 ? (
-          <div className="admin-empty">No orders yet.</div>
+          <div className="admin-empty">
+            <i className="fa-solid fa-inbox" style={{ fontSize: 32, display: 'block', marginBottom: 8, color: 'var(--text-light)' }} />
+            No orders yet.
+          </div>
         ) : (
           <table className="admin-table">
             <thead>
@@ -87,23 +98,25 @@ function Dashboard() {
             <tbody>
               {recentOrders.map((order) => (
                 <tr key={order._id}>
-                  <td style={{ fontFamily: 'monospace', fontSize: 12 }}>#{order._id.slice(-8).toUpperCase()}</td>
+                  <td style={{ fontFamily: 'monospace', fontSize: 12, color: 'var(--text-secondary)' }}>
+                    #{order._id.slice(-8).toUpperCase()}
+                  </td>
                   <td>
                     <div style={{ fontWeight: 600 }}>{order.user?.name || 'N/A'}</div>
-                    <div style={{ fontSize: 12, color: '#6b7280' }}>{order.user?.email}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{order.user?.email}</div>
                   </td>
-                  <td style={{ fontWeight: 600 }}>${order.totalPrice?.toFixed(2)}</td>
+                  <td style={{ fontWeight: 700 }}>${order.totalPrice?.toFixed(2)}</td>
                   <td>
                     <span className={`status-badge ${STATUS_COLORS[order.orderStatus] || ''}`}>
                       {order.orderStatus}
                     </span>
                   </td>
-                  <td style={{ fontSize: 13, color: '#6b7280' }}>
+                  <td style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
                     {new Date(order.createdAt).toLocaleDateString()}
                   </td>
                   <td>
-                    <Link to={`/admin/orders/${order._id}`} className="admin-btn admin-btn-outline admin-btn-sm">
-                      View
+                    <Link to={`/admin/orders/${order._id}`} className="admin-btn admin-btn-outline admin-btn-xs">
+                      View <i className="fa-solid fa-eye" />
                     </Link>
                   </td>
                 </tr>

@@ -23,7 +23,6 @@ function AdminBlogs() {
   const fetchBlogs = async () => {
     setLoading(true)
     try {
-      // Admin sees all (including unpublished) - call without isPublished filter
       const { data } = await API.get('/blogs?limit=50')
       setBlogs(data.blogs)
     } catch (err) {
@@ -69,7 +68,7 @@ function AdminBlogs() {
     setImagePreview(
       blog.image
         ? blog.image.startsWith('/uploads')
-          ? `http://localhost:5000${blog.image}`
+          ? `${import.meta.env.VITE_API_URL}${blog.image}`
           : blog.image
         : ''
     )
@@ -118,21 +117,21 @@ function AdminBlogs() {
   return (
     <div>
       <div className="admin-page-header">
-        <h1>Blog Posts</h1>
-        <button className="admin-btn admin-btn-primary" onClick={openNew}>+ New Post</button>
+        <h1><i className="fa-solid fa-newspaper" style={{ marginRight: 10, color: 'var(--primary)' }} />Blog Posts</h1>
+        <button className="admin-btn admin-btn-primary" onClick={openNew}>
+          <i className="fa-solid fa-plus" /> New Post
+        </button>
       </div>
 
-      {/* Form Modal */}
+      {/* Modal */}
       {showForm && (
-        <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
-          zIndex: 9999, overflowY: 'auto', padding: '40px 16px',
-          display: 'flex', alignItems: 'flex-start', justifyContent: 'center'
-        }}>
-          <div style={{ background: '#fff', borderRadius: 16, padding: 32, width: '100%', maxWidth: 700 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h2 style={{ fontSize: 18, fontWeight: 700 }}>{editId ? 'Edit Blog Post' : 'New Blog Post'}</h2>
-              <button onClick={() => setShowForm(false)} style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#9ca3af' }}>✕</button>
+        <div className="admin-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowForm(false) }}>
+          <div className="admin-modal">
+            <div className="admin-modal-header">
+              <h2>{editId ? 'Edit Blog Post' : 'New Blog Post'}</h2>
+              <button className="admin-modal-close" onClick={() => setShowForm(false)}>
+                <i className="fa-solid fa-xmark" />
+              </button>
             </div>
 
             <form onSubmit={handleSubmit}>
@@ -156,28 +155,32 @@ function AdminBlogs() {
                 <label>Featured Image</label>
                 <input type="file" accept="image/*" onChange={handleImageChange} />
                 {imagePreview && (
-                  <img src={imagePreview} alt="preview" style={{ width: 120, height: 80, objectFit: 'cover', borderRadius: 8, marginTop: 8, border: '1px solid #e5e7eb' }} />
+                  <img src={imagePreview} alt="preview" style={{ width: 120, height: 80, objectFit: 'cover', borderRadius: 8, marginTop: 8, border: '1px solid var(--border)' }} />
                 )}
               </div>
               <div className="admin-form-group" style={{ marginBottom: 14 }}>
-                <label>Excerpt <span style={{ color: '#9ca3af', fontSize: 12 }}>(short summary, max 300 chars)</span></label>
+                <label>Excerpt <span style={{ color: 'var(--text-light)', fontSize: 12 }}>(max 300 chars)</span></label>
                 <textarea name="excerpt" value={form.excerpt} onChange={handleChange} rows={2} placeholder="Short description..." maxLength={300} />
               </div>
               <div className="admin-form-group" style={{ marginBottom: 14 }}>
                 <label>Content *</label>
                 <textarea name="content" value={form.content} onChange={handleChange} rows={6} placeholder="Full blog content..." required />
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 14, fontWeight: 600 }}>
+              <div style={{ marginBottom: 20 }}>
+                <label className="admin-flag-label" style={{ display: 'inline-flex' }}>
                   <input type="checkbox" name="isPublished" checked={form.isPublished} onChange={handleChange} />
+                  <i className="fa-solid fa-globe" style={{ color: form.isPublished ? 'var(--success)' : 'var(--text-light)' }} />
                   Published (visible on site)
                 </label>
               </div>
               <div style={{ display: 'flex', gap: 10 }}>
                 <button type="submit" className="admin-btn admin-btn-primary" disabled={saving}>
+                  <i className={`fa-solid ${saving ? 'fa-spinner fa-spin' : 'fa-floppy-disk'}`} />
                   {saving ? 'Saving...' : editId ? 'Update Post' : 'Publish Post'}
                 </button>
-                <button type="button" className="admin-btn admin-btn-outline" onClick={() => setShowForm(false)}>Cancel</button>
+                <button type="button" className="admin-btn admin-btn-outline" onClick={() => setShowForm(false)}>
+                  <i className="fa-solid fa-xmark" /> Cancel
+                </button>
               </div>
             </form>
           </div>
@@ -187,9 +190,15 @@ function AdminBlogs() {
       {/* Blog Table */}
       <div className="admin-table-card">
         {loading ? (
-          <div className="admin-loading">Loading blogs...</div>
+          <div className="admin-loading">
+            <div className="admin-loader" />
+            <div>Loading blogs...</div>
+          </div>
         ) : blogs.length === 0 ? (
-          <div className="admin-empty">No blog posts yet. Click "New Post" to add one.</div>
+          <div className="admin-empty">
+            <i className="fa-solid fa-file-pen" style={{ fontSize: 32, display: 'block', marginBottom: 8, color: 'var(--text-light)' }} />
+            No blog posts yet. Click "New Post" to add one.
+          </div>
         ) : (
           <table className="admin-table">
             <thead>
@@ -207,7 +216,7 @@ function AdminBlogs() {
               {blogs.map((blog) => {
                 const imgSrc = blog.image
                   ? blog.image.startsWith('/uploads')
-                    ? `http://localhost:5000${blog.image}`
+                    ? `${import.meta.env.VITE_API_URL}${blog.image}`
                     : blog.image
                   : null
                 return (
@@ -216,38 +225,45 @@ function AdminBlogs() {
                       {imgSrc ? (
                         <img src={imgSrc} alt={blog.title} className="admin-product-img" />
                       ) : (
-                        <div style={{ width: 48, height: 48, background: '#f3f4f6', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', fontSize: 18 }}>
-                          📰
+                        <div style={{ width: 44, height: 44, background: 'var(--bg)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-light)', fontSize: 18 }}>
+                          <i className="fa-solid fa-file-lines" />
                         </div>
                       )}
                     </td>
                     <td style={{ fontWeight: 600, maxWidth: 240 }}>
                       <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{blog.title}</div>
-                      <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{blog.views || 0} views</div>
+                      <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>
+                        <i className="fa-regular fa-eye" style={{ marginRight: 3 }} />{blog.views || 0} views
+                      </div>
                     </td>
                     <td>
-                      <span style={{ background: '#e0e7ff', color: '#3730a3', fontSize: 12, fontWeight: 600, padding: '2px 8px', borderRadius: 10 }}>
+                      <span style={{ background: '#e0e7ff', color: '#3730a3', fontSize: 12, fontWeight: 600, padding: '3px 10px', borderRadius: 10 }}>
                         {blog.category}
                       </span>
                     </td>
                     <td style={{ fontSize: 13 }}>{blog.author}</td>
                     <td>
                       <span className={`status-badge ${blog.isPublished ? 'status-delivered' : 'status-cancelled'}`}>
+                        <i className={`fa-solid ${blog.isPublished ? 'fa-circle-check' : 'fa-circle-pause'}`} style={{ marginRight: 4 }} />
                         {blog.isPublished ? 'Published' : 'Draft'}
                       </span>
                     </td>
-                    <td style={{ fontSize: 13, color: '#6b7280' }}>
+                    <td style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+                      <i className="fa-regular fa-calendar" style={{ marginRight: 5 }} />
                       {new Date(blog.createdAt).toLocaleDateString()}
                     </td>
                     <td>
                       <div style={{ display: 'flex', gap: 6 }}>
-                        <button className="admin-btn admin-btn-outline admin-btn-sm" onClick={() => openEdit(blog)}>Edit</button>
+                        <button className="admin-btn admin-btn-outline admin-btn-xs" onClick={() => openEdit(blog)}>
+                          <i className="fa-solid fa-pen" /> Edit
+                        </button>
                         <button
-                          className="admin-btn admin-btn-danger admin-btn-sm"
+                          className="admin-btn admin-btn-danger admin-btn-xs"
                           onClick={() => handleDelete(blog._id)}
                           disabled={deleting === blog._id}
                         >
-                          {deleting === blog._id ? '...' : 'Delete'}
+                          <i className={`fa-solid ${deleting === blog._id ? 'fa-spinner fa-spin' : 'fa-trash'}`} />
+                          {deleting === blog._id ? '' : 'Delete'}
                         </button>
                       </div>
                     </td>

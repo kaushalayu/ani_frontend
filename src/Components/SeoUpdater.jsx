@@ -42,11 +42,11 @@ function SeoUpdater() {
         setMetaProperty('og:title', s.ogTitle || s.siteTitle)
         setMetaProperty('og:description', s.ogDescription || s.siteDescription)
         if (s.ogImage) {
-          setMetaProperty('og:image', `http://localhost:5000${s.ogImage}`)
+          setMetaProperty('og:image', `${import.meta.env.VITE_API_URL}${s.ogImage}`)
         }
 
         if (s.siteIcon) {
-          const iconUrl = `http://localhost:5000${s.siteIcon}`
+          const iconUrl = `${import.meta.env.VITE_API_URL}${s.siteIcon}`
           let link = document.querySelector('link[rel="icon"]')
           if (link) {
             link.href = iconUrl

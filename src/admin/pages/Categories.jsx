@@ -66,14 +66,14 @@ function AdminCategories() {
   return (
     <div>
       <div className="admin-page-header">
-        <h1>Categories</h1>
+        <h1><i className="fa-solid fa-tags" style={{ marginRight: 10, color: 'var(--primary)' }} />Categories</h1>
       </div>
 
-      {/* Form */}
       <div className="admin-form-card" style={{ marginBottom: 24 }}>
-        <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 16 }}>
+        <div className="admin-section-title">
+          <i className={`fa-solid ${editId ? 'fa-pen' : 'fa-plus'}`} />
           {editId ? 'Edit Category' : 'Add New Category'}
-        </h3>
+        </div>
         <form onSubmit={handleSubmit}>
           <div className="admin-form-grid" style={{ gridTemplateColumns: '1fr 2fr' }}>
             <div className="admin-form-group">
@@ -96,27 +96,32 @@ function AdminCategories() {
           </div>
           <div className="admin-form-actions">
             <button type="submit" className="admin-btn admin-btn-primary" disabled={saving}>
+              <i className={`fa-solid ${saving ? 'fa-spinner fa-spin' : 'fa-floppy-disk'}`} />
               {saving ? 'Saving...' : editId ? 'Update Category' : 'Add Category'}
             </button>
             {editId && (
               <button type="button" className="admin-btn admin-btn-outline" onClick={handleCancel}>
-                Cancel
+                <i className="fa-solid fa-xmark" /> Cancel
               </button>
             )}
           </div>
         </form>
       </div>
 
-      {/* List */}
       <div className="admin-table-card">
         <div className="admin-table-header">
           <h2>All Categories ({categories.length})</h2>
         </div>
 
         {loading ? (
-          <div className="admin-loading">Loading...</div>
+          <div className="admin-loading">
+            <div className="admin-loader" />
+          </div>
         ) : categories.length === 0 ? (
-          <div className="admin-empty">No categories yet. Add one above!</div>
+          <div className="admin-empty">
+            <i className="fa-solid fa-tag" style={{ fontSize: 32, display: 'block', marginBottom: 8, color: 'var(--text-light)' }} />
+            No categories yet. Add one above!
+          </div>
         ) : (
           <table className="admin-table">
             <thead>
@@ -132,17 +137,22 @@ function AdminCategories() {
               {categories.map((cat) => (
                 <tr key={cat._id}>
                   <td style={{ fontWeight: 600 }}>{cat.name}</td>
-                  <td style={{ fontFamily: 'monospace', fontSize: 12, color: '#6b7280' }}>{cat.slug}</td>
-                  <td style={{ fontSize: 13, color: '#6b7280' }}>{cat.description || '—'}</td>
+                  <td style={{ fontFamily: 'monospace', fontSize: 12, color: 'var(--text-secondary)' }}>{cat.slug}</td>
+                  <td style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{cat.description || '—'}</td>
                   <td>
                     <span className={`status-badge ${cat.isActive ? 'status-delivered' : 'status-cancelled'}`}>
+                      <i className={`fa-solid ${cat.isActive ? 'fa-eye' : 'fa-eye-slash'}`} style={{ marginRight: 4 }} />
                       {cat.isActive ? 'Active' : 'Hidden'}
                     </span>
                   </td>
                   <td>
                     <div style={{ display: 'flex', gap: 6 }}>
-                      <button className="admin-btn admin-btn-outline admin-btn-sm" onClick={() => handleEdit(cat)}>Edit</button>
-                      <button className="admin-btn admin-btn-danger admin-btn-sm" onClick={() => handleDelete(cat._id)}>Delete</button>
+                      <button className="admin-btn admin-btn-outline admin-btn-xs" onClick={() => handleEdit(cat)}>
+                        <i className="fa-solid fa-pen" /> Edit
+                      </button>
+                      <button className="admin-btn admin-btn-danger admin-btn-xs" onClick={() => handleDelete(cat._id)}>
+                        <i className="fa-solid fa-trash" /> Delete
+                      </button>
                     </div>
                   </td>
                 </tr>

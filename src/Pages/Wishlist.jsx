@@ -12,7 +12,7 @@ function Wishlist() {
   // Handle both /uploads/ (backend) and /assets/ (static) images
   const getImgSrc = (img) => {
     if (!img) return '/assets/images/best-product1.png'
-    if (img.startsWith('/uploads')) return `http://localhost:5000${img}`
+    if (img.startsWith('/uploads')) return `${import.meta.env.VITE_API_URL}${img}`
     if (img.startsWith('http')) return img
     return img
   }

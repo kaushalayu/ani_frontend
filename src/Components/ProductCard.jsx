@@ -27,7 +27,7 @@ function ProductCard({ product, layout = 'grid' }) {
 
   // Image URL — handles both /uploads/ (backend) and /assets/ (static)
   const imgSrc = product.image?.startsWith('/uploads')
-    ? `http://localhost:5000${product.image}`
+    ? `${import.meta.env.VITE_API_URL}${product.image}`
     : product.image || '/assets/images/best-product1.png'
 
   const productLink = `/product/${product.slug || product._id}`

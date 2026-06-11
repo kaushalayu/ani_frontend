@@ -46,7 +46,7 @@ function Blog() {
 
   const imgSrc = (img) => {
     if (!img) return '/assets/images/single-blog-tab-img1.jpg'
-    if (img.startsWith('/uploads')) return `http://localhost:5000${img}`
+    if (img.startsWith('/uploads')) return `${import.meta.env.VITE_API_URL}${img}`
     if (img.startsWith('http')) return img
     return `/assets/images/${img}`
   }

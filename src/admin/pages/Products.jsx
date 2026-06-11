@@ -47,24 +47,39 @@ function AdminProducts() {
       <div className="admin-page-header">
         <h1>Products</h1>
         <Link to="/admin/products/new" className="admin-btn admin-btn-primary">
-          + Add Product
+          <i className="fa-solid fa-plus" /> Add Product
         </Link>
       </div>
 
       <div className="admin-table-card">
         <div className="admin-search-bar">
+          <i className="fa-solid fa-search" style={{ color: 'var(--text-light)' }} />
           <input
             type="text"
-            placeholder="Search products..."
+            placeholder="Search products by name..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1) }}
           />
+          {search && (
+            <button
+              onClick={() => { setSearch(''); setPage(1) }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-light)' }}
+            >
+              <i className="fa-solid fa-xmark" />
+            </button>
+          )}
         </div>
 
         {loading ? (
-          <div className="admin-loading">Loading products...</div>
+          <div className="admin-loading">
+            <div className="admin-loader" />
+            <div>Loading products...</div>
+          </div>
         ) : products.length === 0 ? (
-          <div className="admin-empty">No products found.</div>
+          <div className="admin-empty">
+            <i className="fa-solid fa-box-open" style={{ fontSize: 32, display: 'block', marginBottom: 8, color: 'var(--text-light)' }} />
+            {search ? 'No products match your search.' : 'No products found. Add your first product!'}
+          </div>
         ) : (
           <>
             <table className="admin-table">
@@ -84,42 +99,51 @@ function AdminProducts() {
                   <tr key={p._id}>
                     <td>
                       <img
-                        src={p.image.startsWith('/uploads') ? `http://localhost:5000${p.image}` : p.image}
+                        src={p.image.startsWith('/uploads') ? `${import.meta.env.VITE_API_URL}${p.image}` : p.image}
                         alt={p.name}
                         className="admin-product-img"
                       />
                     </td>
                     <td>
                       <div style={{ fontWeight: 600 }}>{p.name}</div>
-                      <div style={{ fontSize: 12, color: '#6b7280' }}>{p.badge}</div>
+                      {p.badge && <div style={{ fontSize: 11, color: 'var(--text-light)', marginTop: 2 }}>{p.badge}</div>}
                     </td>
                     <td style={{ fontSize: 13 }}>{p.category?.name || '—'}</td>
-                    <td style={{ fontWeight: 600 }}>
+                    <td style={{ fontWeight: 700 }}>
                       {p.hasPillsOptions && p.pillsOptions?.length > 0
                         ? `$${p.pillsOptions[0].price.toFixed(2)}+`
                         : `$${p.price?.toFixed(2)}`}
                     </td>
                     <td>
-                      {p.hasPillsOptions
-                        ? p.pillsOptions?.reduce((a, b) => a + b.stock, 0)
-                        : p.stock}
+                      <span style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 4,
+                        color: p.isActive ? 'var(--success)' : 'var(--text-light)',
+                        fontWeight: 600
+                      }}>
+                        <i className={`fa-solid ${p.isActive ? 'fa-circle' : 'fa-circle'}`} style={{ fontSize: 8 }} />
+                        {p.hasPillsOptions
+                          ? p.pillsOptions?.reduce((a, b) => a + b.stock, 0)
+                          : p.stock}
+                      </span>
                     </td>
                     <td>
                       <span className={`status-badge ${p.isActive ? 'status-delivered' : 'status-cancelled'}`}>
+                        <i className={`fa-solid ${p.isActive ? 'fa-eye' : 'fa-eye-slash'}`} />
                         {p.isActive ? 'Active' : 'Hidden'}
                       </span>
                     </td>
                     <td>
                       <div style={{ display: 'flex', gap: 6 }}>
-                        <Link to={`/admin/products/edit/${p._id}`} className="admin-btn admin-btn-outline admin-btn-sm">
-                          Edit
+                        <Link to={`/admin/products/edit/${p._id}`} className="admin-btn admin-btn-outline admin-btn-xs">
+                          <i className="fa-solid fa-pen" /> Edit
                         </Link>
                         <button
-                          className="admin-btn admin-btn-danger admin-btn-sm"
+                          className="admin-btn admin-btn-danger admin-btn-xs"
                           onClick={() => handleDelete(p._id)}
                           disabled={deleting === p._id}
                         >
-                          {deleting === p._id ? '...' : 'Delete'}
+                          <i className={`fa-solid ${deleting === p._id ? 'fa-spinner fa-spin' : 'fa-trash'}`} />
+                          {deleting === p._id ? '' : 'Delete'}
                         </button>
                       </div>
                     </td>
@@ -130,7 +154,9 @@ function AdminProducts() {
 
             {totalPages > 1 && (
               <div className="admin-pagination">
-                <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>← Prev</button>
+                <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>
+                  <i className="fa-solid fa-chevron-left" />
+                </button>
                 {Array.from({ length: totalPages }, (_, i) => (
                   <button
                     key={i + 1}
@@ -140,7 +166,9 @@ function AdminProducts() {
                     {i + 1}
                   </button>
                 ))}
-                <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)}>Next →</button>
+                <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)}>
+                  <i className="fa-solid fa-chevron-right" />
+                </button>
               </div>
             )}
           </>

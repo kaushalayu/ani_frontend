@@ -53,7 +53,7 @@ function SearchOverlay() {
     <div id="search" className={open ? 'open' : ''}>
       <span className="close" onClick={() => setOpen(false)}>X</span>
       <form role="search" id="searchform" method="get">
-        <input value="" name="q" type="search" placeholder="Type to Search" />
+        <input name="q" type="search" placeholder="Type to Search" />
       </form>
     </div>
   )
