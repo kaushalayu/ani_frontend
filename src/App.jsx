@@ -49,9 +49,6 @@ import AdminFaqs from './admin/pages/Faqs'
 import AdminTeam from './admin/pages/Team'
 import AdminSiteServices from './admin/pages/Services'
 
-// Setup
-import AdminSetup from './Pages/AdminSetup'
-
 function App() {
   return (
     <Routes>
@@ -66,7 +63,6 @@ function App() {
         <Route path="contact" element={<Contact />} />
         <Route path="login" element={<Login />} />
         <Route path="join-now" element={<JoinNow />} />
-        <Route path="admin-setup" element={<AdminSetup />} />
         <Route path="faq" element={<FAQ />} />
         <Route path="services" element={<Services />} />
         <Route path="testimonials" element={<Testimonials />} />
