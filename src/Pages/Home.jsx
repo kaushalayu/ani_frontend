@@ -1,5 +1,9 @@
-import { useState } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
+import { useProducts } from '../hooks/useProducts'
+import { useCart } from '../Context/CartContext'
+import { useWishlist } from '../Context/WishlistContext'
+import API from '../utils/api'
 import './Home.css'
 
 const categories = [
@@ -17,35 +21,11 @@ const tabData = [
   { id: 'gynecology', label: 'Gynecology' },
 ]
 
-const featuredProducts = [
-  { name: 'VitalEase Multivitamins', type: 'Supplement', price: 63, img: 'assets/images/product1.png', rating: 4.8 },
-  { name: 'DermaGlow Skin Cream', type: 'Healthy Skin', price: 84, img: 'assets/images/product2.png', rating: 4.8 },
-  { name: 'CalmFlu Relief Syrup', type: 'Flu Remedy', price: 96, img: 'assets/images/product3.png', rating: 4.8 },
-  { name: 'NutriSlim Capsules', type: 'Herbal', price: 42, img: 'assets/images/product4.png', rating: 4.8 },
-]
-
-const bestSellers = [
-  { name: 'ImmunoBoost', type: 'Vitamin', price: 63, img: 'assets/images/best-product1.png', rating: 4.8 },
-  { name: 'MetaboTrim', type: 'Herbal', price: 87, img: 'assets/images/best-product2.png', rating: 4.8 },
-  { name: 'DermaGlow', type: 'Cream', price: 55, img: 'assets/images/best-product3.png', rating: 4.8 },
-  { name: 'CoughRelief Max', type: 'Syrup', price: 42, img: 'assets/images/best-product4.png', rating: 4.8 },
-  { name: 'NutriCore Essentials', type: 'Vitamin', price: 12, img: 'assets/images/best-product5.png', rating: 4.8 },
-  { name: 'Slimvia Burn', type: 'Herbal', price: 26, img: 'assets/images/best-product6.png', rating: 4.8 },
-  { name: 'AcneShield Gel', type: 'Cream', price: 82, img: 'assets/images/best-product7.png', rating: 4.8 },
-  { name: 'FluAway Tabs', type: 'Tablet', price: 36, img: 'assets/images/best-product8.png', rating: 4.8 },
-]
-
 const whyChooseUs = [
   { icon: 'assets/images/product-icon1.png', title: 'Certified Pharmacists', desc: 'Licensed experts verify every prescription before dispatch.' },
   { icon: 'assets/images/product-icon2.png', title: '100% Quality Assured', desc: 'All medicines are sourced from verified & trusted manufacturers.' },
   { icon: 'assets/images/benefits-icon1.png', title: 'Free Fast Delivery', desc: 'Get your order delivered to your doorstep — absolutely free.' },
   { icon: 'assets/images/benefits-icon4.png', title: '24/7 Customer Care', desc: 'Our support team is available round the clock to help you.' },
-]
-
-const blogPosts = [
-  { tag: 'Immunity', title: '5 Natural Ways to Strengthen Your Immune System', img: 'assets/images/news-and-articles-img1.jpg', excerpt: 'Discover simple lifestyle habits and key supplements that can naturally boost your immunity every day.' },
-  { tag: 'Skincare', title: 'Skincare Advice for Sensitive Skin: Simple Tips for a Calmer Complexion', img: 'assets/images/news-and-articles-img2.jpg', excerpt: 'Learn how to care for sensitive skin with gentle routines and dermatologist-recommended products.' },
-  { tag: 'Supplements', title: 'Do You Really Need Supplements? A Practical Guide to Boosting Your Health', img: 'assets/images/news-and-articles-img3.jpg', excerpt: 'Find out when supplements are helpful and how to choose the right ones for your health needs.' },
 ]
 
 const processSteps = [
@@ -54,7 +34,7 @@ const processSteps = [
   { icon: 'assets/images/capsule-icon.png', title: 'Get It Delivered', desc: 'Receive your order at your doorstep — fast, safe, and hassle-free.' },
 ]
 
-function Toast({ message, type, onClose }) {
+function Toast({ message, type }) {
   return (
     <div className={`toast-notification toast-${type}`}>
       <i className={`fa-solid ${type === 'cart' ? 'fa-cart-shopping' : 'fa-heart'}`}></i>
@@ -64,31 +44,108 @@ function Toast({ message, type, onClose }) {
 }
 
 function StarRating({ rating }) {
+  const stars = rating || 0
   return (
     <div className="star-rating">
       {[...Array(5)].map((_, i) => (
-        <i key={i} className={`fa-solid fa-star${i < Math.floor(rating) ? '' : i < rating ? '-half-alt' : '-o'}`}></i>
+        <i key={i} className={i < Math.floor(stars) ? 'fa-solid fa-star' : 'fa-regular fa-star'}></i>
       ))}
-      <span>{rating}/5</span>
+      <span>{stars}/5</span>
     </div>
   )
 }
 
+// Helper to get product image URL
+function getProductImg(img) {
+  if (!img) return '/assets/images/best-product1.png'
+  if (img.startsWith('/uploads')) return `${import.meta.env.VITE_API_URL}${img}`
+  if (img.startsWith('http')) return img
+  return img.startsWith('/') ? img : '/' + img
+}
+
 function ProductCard({ product, onAddToCart, onAddToWishlist }) {
+  const price = product.hasPillsOptions && product.pillsOptions?.[0]
+    ? product.pillsOptions[0].price
+    : product.price || 0
+
+  const productId = product._id || product.id
+  const productSlug = product.slug || productId
+
   return (
     <div className="product-card">
       <div className="product-image-wrapper">
-        <img src={product.img} alt={product.name} />
-        <span className="product-badge">{product.type}</span>
-        <button className="wishlist-btn" onClick={() => onAddToWishlist(product.name)}><i className="fa-regular fa-heart"></i></button>
+        <Link to={productId ? `/product/${productSlug}` : '/shop'}>
+          <img src={getProductImg(product.image || product.img)} alt={product.name} />
+        </Link>
+        <span className="product-badge">{product.category?.name || product.badge || product.type}</span>
+        <button className="wishlist-btn" onClick={() => onAddToWishlist(product)}><i className="fa-regular fa-heart"></i></button>
       </div>
       <div className="product-info">
-        <h3 className="product-name">{product.name}</h3>
-        <StarRating rating={product.rating} />
+        <h3 className="product-name">
+          <Link to={productId ? `/product/${productSlug}` : '/shop'}>{product.name}</Link>
+        </h3>
+        <StarRating rating={product.ratings || product.rating} />
         <div className="product-price-row">
-          <span className="product-price">${product.price}.00</span>
-          <button className="add-to-cart-btn" onClick={() => onAddToCart(product.name)}>Add to cart</button>
+          <span className="product-price">${price.toFixed ? price.toFixed(2) : price}.00</span>
+          <button className="add-to-cart-btn" onClick={() => onAddToCart(product)}>Add to cart</button>
         </div>
+      </div>
+    </div>
+  )
+}
+
+function TestimonialCarousel({ testimonials }) {
+  const [current, setCurrent] = useState(0)
+  const items = testimonials.length > 0 ? testimonials : [
+    { name: 'Jennifer Troyer', role: 'Administrator', img: 'assets/images/client-img1.jpg', text: 'Great service!', rating: 5 },
+  ]
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent(prev => (prev + 1) % items.length)
+    }, 5000)
+    return () => clearInterval(timer)
+  }, [items.length])
+
+  const goTo = useCallback((idx) => setCurrent(idx), [])
+  const prev = useCallback(() => setCurrent(c => (c === 0 ? items.length - 1 : c - 1)), [items.length])
+  const next = useCallback(() => setCurrent(c => (c + 1) % items.length), [items.length])
+
+  return (
+    <div className="carousel slide">
+      <div className="carousel-inner">
+        {items.map((client, i) => (
+          <div className={`carousel-item${i === current ? ' active' : ''}`} key={client._id || i}>
+            <div className="testimonial-card">
+              <div className="testimonial-stars">
+                {[...Array(client.rating || 5)].map((_, si) => (
+                  <i key={si} className="fa-solid fa-star"></i>
+                ))}
+              </div>
+              <p className="testimonial-text">"{client.text}"</p>
+              <div className="testimonial-author">
+                <img src={client.image?.startsWith('http') ? client.image : client.image?.startsWith('/uploads') ? `${import.meta.env.VITE_API_URL}${client.image}` : client.img || 'assets/images/client-img1.jpg'} alt={client.name} />
+                <div>
+                  <p className="testimonial-name">{client.name}</p>
+                  <span className="testimonial-role">{client.role}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="testimonial-dots">
+        {items.map((_, i) => (
+          <button key={i} className={`testimonial-dot${i === current ? ' active' : ''}`} onClick={() => goTo(i)} aria-label={`Go to slide ${i + 1}`} />
+        ))}
+      </div>
+      <div className="testimonial-controls">
+        <button className="testimonial-arrow testimonial-prev" onClick={prev} aria-label="Previous">
+          <i className="fa-solid fa-arrow-left"></i>
+        </button>
+        <button className="testimonial-arrow testimonial-next" onClick={next} aria-label="Next">
+          <i className="fa-solid fa-arrow-right"></i>
+        </button>
       </div>
     </div>
   )
@@ -97,11 +154,63 @@ function ProductCard({ product, onAddToCart, onAddToWishlist }) {
 function Home() {
   const [activeTab, setActiveTab] = useState('all')
   const [toast, setToast] = useState(null)
+  const [blogPosts, setBlogPosts] = useState([])
+  const [testimonials, setTestimonials] = useState([])
+  const { addToCart } = useCart()
+  const { addToWishlist } = useWishlist()
+
+  useEffect(() => {
+    API.get('/blogs?limit=3').then(({ data }) => setBlogPosts(data.blogs || [])).catch(() => {})
+    API.get('/testimonials').then(({ data }) => setTestimonials(data.testimonials || [])).catch(() => {})
+  }, [])
+
+  // Fetch featured products (isFeatured=true) — limit 8
+  const featuredParams = useMemo(() => ({ isFeatured: true, limit: 8 }), [])
+  const { products: featuredProducts, loading: featuredLoading } = useProducts(featuredParams)
+
+  // Fetch best sellers — limit 8
+  const bestSellerParams = useMemo(() => ({ isBestSeller: true, limit: 8 }), [])
+  const { products: bestSellers, loading: bestLoading } = useProducts(bestSellerParams)
 
   function showToast(type, productName) {
     setToast({ type, message: type === 'cart' ? `${productName} added to cart` : `${productName} added to wishlist` })
     setTimeout(() => setToast(null), 2500)
   }
+
+  function handleAddToCart(product) {
+    const price = product.hasPillsOptions && product.pillsOptions?.[0]
+      ? product.pillsOptions[0].price
+      : product.price || 0
+    addToCart({
+      id: product._id || product.id,
+      name: product.name,
+      price,
+      img: product.image || product.img || '',
+      qty: 1,
+    })
+    showToast('cart', product.name)
+  }
+
+  function handleAddToWishlist(product) {
+    addToWishlist({
+      id: product._id || product.id,
+      name: product.name,
+      price: product.price || 0,
+      img: product.image || product.img || '',
+    })
+    showToast('wishlist', product.name)
+  }
+
+  // Skeleton loader for product grids
+  const ProductSkeleton = () => (
+    <div className="product-card skeleton-card" style={{ opacity: 0.5 }}>
+      <div style={{ background: '#e5e7eb', height: 200, borderRadius: 8 }} />
+      <div style={{ padding: '12px 0' }}>
+        <div style={{ background: '#e5e7eb', height: 14, borderRadius: 4, marginBottom: 8 }} />
+        <div style={{ background: '#e5e7eb', height: 14, borderRadius: 4, width: '60%' }} />
+      </div>
+    </div>
+  )
 
   return (
     <>
@@ -245,9 +354,24 @@ function Home() {
             ))}
           </div>
           <div className="product-grid">
-            {featuredProducts.map((product, i) => (
-              <ProductCard product={product} key={i} onAddToCart={(name) => showToast('cart', name)} onAddToWishlist={(name) => showToast('wishlist', name)} />
-            ))}
+            {featuredLoading
+              ? [...Array(4)].map((_, i) => <ProductSkeleton key={i} />)
+              : featuredProducts.length > 0
+                ? featuredProducts.map((product) => (
+                    <ProductCard
+                      product={product}
+                      key={product._id}
+                      onAddToCart={handleAddToCart}
+                      onAddToWishlist={handleAddToWishlist}
+                    />
+                  ))
+                : (
+                  <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '40px', color: '#9ca3af' }}>
+                    <i className="fa-solid fa-box-open" style={{ fontSize: 32, marginBottom: 8 }} />
+                    <p>No featured products yet. Add them from the admin panel.</p>
+                  </div>
+                )
+            }
           </div>
         </div>
       </section>
@@ -260,9 +384,24 @@ function Home() {
             <h2 className="section-title">Best Selling Products</h2>
           </div>
           <div className="product-grid">
-            {bestSellers.map((product, i) => (
-              <ProductCard product={product} key={i} onAddToCart={(name) => showToast('cart', name)} onAddToWishlist={(name) => showToast('wishlist', name)} />
-            ))}
+            {bestLoading
+              ? [...Array(8)].map((_, i) => <ProductSkeleton key={i} />)
+              : bestSellers.length > 0
+                ? bestSellers.map((product) => (
+                    <ProductCard
+                      product={product}
+                      key={product._id}
+                      onAddToCart={handleAddToCart}
+                      onAddToWishlist={handleAddToWishlist}
+                    />
+                  ))
+                : (
+                  <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '40px', color: '#9ca3af' }}>
+                    <i className="fa-solid fa-box-open" style={{ fontSize: 32, marginBottom: 8 }} />
+                    <p>No best sellers yet. Add them from the admin panel.</p>
+                  </div>
+                )
+            }
           </div>
         </div>
       </section>
@@ -298,7 +437,7 @@ function Home() {
                   <span className="d-block discount-percent">5%</span>
                   <span className="d-block smol-text">Cashback</span>
                   <h4 className="specialh4">Vitamins &amp; <br />Supplements</h4>
-                  <a href="single-product.html" className="text-decoration-none elementary_btn d-inline-block">Browse All</a>
+                  <Link to="/shop" className="text-decoration-none elementary_btn d-inline-block">Browse All</Link>
                 </div>
               </div>
               <div className="col-lg-4 col-md-6 d-flex">
@@ -306,7 +445,7 @@ function Home() {
                   <span className="d-block smol-text">Flat</span>
                   <span className="d-block discount-percent">10% <span className="d-inline-block smol-text mb-0">OFF</span></span>
                   <h4 className="specialh4">Baby &amp; <br />Childcare</h4>
-                  <a href="single-product.html" className="text-decoration-none elementary_btn d-inline-block">Browse All</a>
+                  <Link to="/shop" className="text-decoration-none elementary_btn d-inline-block">Browse All</Link>
                 </div>
               </div>
               <div className="col-lg-4 col-md-6 d-flex">
@@ -314,7 +453,7 @@ function Home() {
                   <span className="d-block discount-percent">12%</span>
                   <span className="d-block smol-text">Cashback</span>
                   <h4 className="specialh4">Personal care <br />&amp; Wellness</h4>
-                  <a href="single-product.html" className="text-decoration-none elementary_btn d-inline-block">Browse All</a>
+                  <Link to="/shop" className="text-decoration-none elementary_btn d-inline-block">Browse All</Link>
                 </div>
               </div>
             </div>
@@ -330,42 +469,7 @@ function Home() {
             <span className="section-subtitle">Testimonials</span>
             <h2 className="section-title">What Our Clients Say</h2>
           </div>
-          <div id="testimonialCarousel" className="carousel slide" data-ride="carousel">
-            <div className="carousel-inner">
-              {[
-                { name: 'Jennifer Troyer', role: 'Administrator', img: 'assets/images/client-img1.jpg' },
-                { name: 'Fergus Douchebag', role: 'Happy Customer', img: 'assets/images/client-img2.jpg' },
-                { name: 'Lucy Smith', role: 'Satisfied Customer', img: 'assets/images/client-img3.jpg' },
-                { name: 'John Smith', role: 'Satisfied Client', img: 'assets/images/client-img4.jpg' },
-              ].map((client, i) => (
-                <div className={`carousel-item${i === 0 ? ' active' : ''}`} key={i}>
-                  <div className="testimonial-card">
-                    <div className="testimonial-stars">
-                      {[...Array(5)].map((_, si) => (
-                        <i key={si} className="fa-solid fa-star"></i>
-                      ))}
-                    </div>
-                    <p className="testimonial-text">"Beatae vitae dicta sunt explicabo nemo enim ipsam voluptatem quia voluptas aspernatur aurodit aut fugit, sed neatae vitae dicta ripiscing elit, sed do euismod tempor incidunt labore are dolore magna aliqua aut enim a minim veniam."</p>
-                    <div className="testimonial-author">
-                      <img src={client.img} alt={client.name} />
-                      <div>
-                        <p className="testimonial-name">{client.name}</p>
-                        <span className="testimonial-role">{client.role}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="testimonial-controls">
-              <a className="testimonial-arrow testimonial-prev" href="#testimonialCarousel" role="button" data-slide="prev">
-                <i className="fa-solid fa-arrow-left"></i>
-              </a>
-              <a className="testimonial-arrow testimonial-next" href="#testimonialCarousel" role="button" data-slide="next">
-                <i className="fa-solid fa-arrow-right"></i>
-              </a>
-            </div>
-          </div>
+          <TestimonialCarousel testimonials={testimonials} />
         </div>
       </section>
 
@@ -377,16 +481,18 @@ function Home() {
             <h2 className="section-title">Our Latest Blog Posts</h2>
           </div>
           <div className="blog-grid">
-            {blogPosts.map((post, i) => (
-              <div className="blog-card" key={i}>
+            {(blogPosts.length > 0 ? blogPosts : [
+              { title: 'Loading...', excerpt: '', image: 'assets/images/news-and-articles-img1.jpg' },
+            ]).map((post, i) => (
+              <div className="blog-card" key={post._id || i}>
                 <div className="blog-image-wrap">
-                  <img src={post.img} alt={post.title} />
-                  <span className="blog-tag">{post.tag}</span>
+                  <img src={post.image?.startsWith('http') ? post.image : post.image?.startsWith('/uploads') ? `${import.meta.env.VITE_API_URL}${post.image}` : post.img || 'assets/images/news-and-articles-img1.jpg'} alt={post.title} />
+                  {post.category && <span className="blog-tag">{post.category}</span>}
                 </div>
                 <div className="blog-content">
                   <h3 className="blog-title">{post.title}</h3>
-                  <p className="blog-excerpt">{post.excerpt}</p>
-                  <Link to="/blog" className="blog-link">Read More <i className="fa-solid fa-arrow-right"></i></Link>
+                  <p className="blog-excerpt">{post.excerpt || post.content?.slice(0, 120)}</p>
+                  <Link to={`/blog/${post.slug || post._id}`} className="blog-link">Read More <i className="fa-solid fa-arrow-right"></i></Link>
                 </div>
               </div>
             ))}

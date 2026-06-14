@@ -31,6 +31,9 @@ function Dashboard() {
     fetchStats()
   }, [])
 
+  const hour = new Date().getHours()
+  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
+
   if (loading) return (
     <div className="admin-loading">
       <div className="admin-loader" />
@@ -45,16 +48,20 @@ function Dashboard() {
     { label: 'Products', value: stats?.totalProducts ?? 0, icon: 'fa-solid fa-capsules', bg: '#fce7f3', color: '#9d174d' },
     { label: 'Pending Orders', value: stats?.pendingOrders ?? 0, icon: 'fa-solid fa-clock', bg: '#fef3c7', color: '#92400e' },
     { label: 'Delivered', value: stats?.deliveredOrders ?? 0, icon: 'fa-solid fa-circle-check', bg: '#d1fae5', color: '#065f46' },
+    { label: 'Contact Messages', value: stats?.contactCount ?? 0, icon: 'fa-solid fa-envelope', bg: '#fce7f3', color: '#9d174d' },
+    { label: 'Unread Messages', value: stats?.unreadContactCount ?? 0, icon: 'fa-solid fa-envelope-open', bg: '#fef3c7', color: '#92400e' },
   ]
 
   return (
     <div>
-      <div className="admin-page-header">
-        <h1>Dashboard</h1>
-        <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-          <i className="fa-solid fa-hand-wave" style={{ marginRight: 6 }} />
-          Welcome back, Admin!
-        </span>
+      <div className="admin-dashboard-hero">
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <h1>
+            <i className="fa-solid fa-hand-wave" style={{ marginRight: 10 }} />
+            {greeting}, {stats?.name || 'Admin'}!
+          </h1>
+          <p>Here's what's happening with your store today.</p>
+        </div>
       </div>
 
       <div className="admin-stats-grid">
@@ -73,10 +80,17 @@ function Dashboard() {
 
       <div className="admin-table-card">
         <div className="admin-table-header">
-          <h2><i className="fa-solid fa-clock-rotate-left" style={{ marginRight: 8, color: 'var(--primary)' }} />Recent Orders</h2>
-          <Link to="/admin/orders" className="admin-btn admin-btn-outline admin-btn-sm">
-            View All <i className="fa-solid fa-arrow-right" />
-          </Link>
+          <h2><i className="fa-solid fa-clock-rotate-left" />Recent Orders</h2>
+          <div style={{ display: 'flex', gap: 8 }}>
+            {stats?.unreadContactCount > 0 && (
+              <Link to="/admin/messages" className="admin-btn admin-btn-primary admin-btn-sm">
+                <i className="fa-solid fa-envelope" /> {stats.unreadContactCount} Unread
+              </Link>
+            )}
+            <Link to="/admin/orders" className="admin-btn admin-btn-outline admin-btn-sm">
+              View All <i className="fa-solid fa-arrow-right" />
+            </Link>
+          </div>
         </div>
         {recentOrders.length === 0 ? (
           <div className="admin-empty">

@@ -1,39 +1,33 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import API from '../utils/api'
 import './Testimonials.css'
 
-const testimonials = [
-  {
-    text: 'Beatae vitae dicta sunt explicabo nemo enim ipsam voluptatem quia voluptas aspernatur aurodit aut fugit, sed neatae vitae dicta ripiscing elit, sed do euismod tempor incidunt labore are dolore magna aliqua aut enim a minim adipiscing elit, sed do euismod tempor incidunt labore minima veniam.',
-    name: 'Jennifer Troyer',
-    role: 'Administrator',
-    img: '/assets/images/client-img1.jpg',
-  },
-  {
-    text: 'Beatae vitae dicta sunt explicabo nemo enim ipsam voluptatem quia voluptas aspernatur aurodit aut fugit, sed neatae vitae dicta ripiscing elit, sed do euismod tempor incidunt labore are dolore magna aliqua aut enim a minim adipiscing elit, sed do euismod tempor incidunt labore minima veniam.',
-    name: 'Fergus Douchebag',
-    role: 'Happy Customer',
-    img: '/assets/images/client-img2.jpg',
-  },
-  {
-    text: 'Beatae vitae dicta sunt explicabo nemo enim ipsam voluptatem quia voluptas aspernatur aurodit aut fugit, sed neatae vitae dicta ripiscing elit, sed do euismod tempor incidunt labore are dolore magna aliqua aut enim a minim adipiscing elit, sed do euismod tempor incidunt labore minima veniam.',
-    name: 'lucy Smith',
-    role: 'Satisfied Customer',
-    img: '/assets/images/client-img3.jpg',
-  },
-  {
-    text: 'Beatae vitae dicta sunt explicabo nemo enim ipsam voluptatem quia voluptas aspernatur aurodit aut fugit, sed neatae vitae dicta ripiscing elit, sed do euismod tempor incidunt labore are dolore magna aliqua aut enim a minim adipiscing elit, sed do euismod tempor incidunt labore minima veniam.',
-    name: 'John Smith',
-    role: 'Satisfied Client',
-    img: '/assets/images/client-img4.jpg',
-  },
-]
-
 function Testimonials() {
+  const [testimonials, setTestimonials] = useState([])
+  const [blogPosts, setBlogPosts] = useState([])
   const [activeIndex, setActiveIndex] = useState(0)
 
-  const prev = () => setActiveIndex(i => (i === 0 ? testimonials.length - 1 : i - 1))
-  const next = () => setActiveIndex(i => (i === testimonials.length - 1 ? 0 : i + 1))
+  useEffect(() => {
+    API.get('/testimonials').then(({ data }) => setTestimonials(data.testimonials || [])).catch(() => {})
+    API.get('/blogs?limit=3').then(({ data }) => setBlogPosts(data.blogs || [])).catch(() => {})
+  }, [])
+
+  const items = testimonials.length > 0 ? testimonials : []
+  const prev = () => setActiveIndex(i => (i === 0 ? items.length - 1 : i - 1))
+  const next = () => setActiveIndex(i => (i === items.length - 1 ? 0 : i + 1))
+
+  const getImg = (img) => {
+    if (!img) return '/assets/images/client-img1.jpg'
+    if (img.startsWith('/uploads')) return `${import.meta.env.VITE_API_URL}${img}`
+    return img
+  }
+
+  const getBlogImg = (img) => {
+    if (!img) return '/assets/images/news-and-articles-img1.jpg'
+    if (img.startsWith('/uploads')) return `${import.meta.env.VITE_API_URL}${img}`
+    return img
+  }
 
   return (
     <div className="testimonials-page">
@@ -72,36 +66,45 @@ function Testimonials() {
             <h2>Our Client Reviews</h2>
           </div>
 
-          <div className="test-carousel-body">
-            <img src="/assets/images/left-quote.png" alt="" className="test-quote-left" />
-            <img src="/assets/images/right-quote.png" alt="" className="test-quote-right" />
-
-            <div className="test-review-box">
-              <figure><img src="/assets/images/rating-stars.png" alt="rating" /></figure>
-              <p>{testimonials[activeIndex].text}</p>
+          {items.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '60px 0', color: '#888' }}>
+              <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: 32, marginBottom: 12 }} />
+              <p>Loading testimonials...</p>
             </div>
+          ) : (
+            <>
+              <div className="test-carousel-body">
+                <img src="/assets/images/left-quote.png" alt="" className="test-quote-left" />
+                <img src="/assets/images/right-quote.png" alt="" className="test-quote-right" />
 
-            <div className="test-indicators">
-              {testimonials.map((t, i) => (
-                <button
-                  key={i}
-                  className={'test-indicator' + (activeIndex === i ? ' active' : '')}
-                  onClick={() => setActiveIndex(i)}
-                >
-                  <figure><img src={t.img} alt={t.name} /></figure>
-                  <div>
-                    <p className="test-client-name">{t.name}</p>
-                    <span>{t.role}</span>
-                  </div>
-                </button>
-              ))}
-            </div>
+                <div className="test-review-box">
+                  <figure><img src="/assets/images/rating-stars.png" alt="rating" /></figure>
+                  <p>{items[activeIndex]?.text || items[activeIndex]?.testimonial || ''}</p>
+                </div>
 
-            <div className="test-nav">
-              <button className="test-nav-btn" onClick={prev}><i className="fa-solid fa-arrow-left" /></button>
-              <button className="test-nav-btn" onClick={next}><i className="fa-solid fa-arrow-right" /></button>
-            </div>
-          </div>
+                <div className="test-indicators">
+                  {items.map((t, i) => (
+                    <button
+                      key={t._id || i}
+                      className={'test-indicator' + (activeIndex === i ? ' active' : '')}
+                      onClick={() => setActiveIndex(i)}
+                    >
+                      <figure><img src={getImg(t.image || t.img)} alt={t.name} /></figure>
+                      <div>
+                        <p className="test-client-name">{t.name}</p>
+                        <span>{t.role || ''}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="test-nav">
+                  <button className="test-nav-btn" onClick={prev}><i className="fa-solid fa-arrow-left" /></button>
+                  <button className="test-nav-btn" onClick={next}><i className="fa-solid fa-arrow-right" /></button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* BLOG POSTS */}
@@ -111,18 +114,16 @@ function Testimonials() {
             <h2>Our Latest Blog Posts</h2>
           </div>
           <div className="test-blog-grid">
-            {[
-              { img: '/assets/images/news-and-articles-img1.jpg', title: '5 Natural Ways to Strengthen Your Immune System', desc: 'Discover simple lifestyle habits and key supplements that can naturally boost your immunity...' },
-              { img: '/assets/images/news-and-articles-img2.jpg', title: 'Skincare Advice for Sensitive Skin: Simple Tips for a Calmer', desc: 'Learn how to care for sensitive skin with gentle routines and dermatologist-recommended products.' },
-              { img: '/assets/images/news-and-articles-img3.jpg', title: 'Do You Really Need Supplements? a Practical Guide to Boosting', desc: 'Find out when supplements are helpful and how to choose the right ones for your health needs.' },
-            ].map((post, i) => (
-              <div key={i} className="test-blog-card">
+            {(blogPosts.length > 0 ? blogPosts : [
+              { img: '/assets/images/news-and-articles-img1.jpg', title: 'Loading...', desc: '', slug: '#' },
+            ]).map((post, i) => (
+              <div key={post._id || i} className="test-blog-card">
                 <div className="test-blog-img">
-                  <figure><img src={post.img} alt={post.title} /></figure>
+                  <figure><img src={getBlogImg(post.image)} alt={post.title} /></figure>
                 </div>
                 <div className="test-blog-body">
-                  <Link to="/blog"><h4>{post.title}</h4></Link>
-                  <p>{post.desc}</p>
+                  <Link to={`/blog/${post.slug || post._id || '#'}`}><h4>{post.title}</h4></Link>
+                  <p>{post.excerpt || post.content?.slice(0, 120) || post.desc || ''}</p>
                 </div>
               </div>
             ))}

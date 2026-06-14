@@ -1,6 +1,39 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import API from '../utils/api'
 
 function Contact() {
+  const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' })
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(null)
+  const [error, setError] = useState('')
+
+  const handleChange = (e) => {
+    setForm(p => ({ ...p, [e.target.name]: e.target.value }))
+    if (error) setError('')
+    if (success) setSuccess(null)
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    setSuccess(null)
+    if (!form.name || !form.email || !form.message) {
+      setError('Please fill in your name, email and message.')
+      return
+    }
+    setLoading(true)
+    try {
+      await API.post('/contact', form)
+      setSuccess('Thank you! Your message has been sent successfully. We will get back to you within 24 hours.')
+      setForm({ name: '', email: '', phone: '', subject: '', message: '' })
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to send message. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <>
       <div className="padding-rl float-left w-100">
@@ -87,25 +120,45 @@ function Contact() {
               <p className="contact-form-desc">Have a question or need assistance? Fill out the form below and our team will get back to you within 24 hours.</p>
             </div>
             <div className="contact-form-wrapper">
-              <form className="contact-form" method="post" id="contactpage">
+              {success && (
+                <div style={{
+                  background: '#d1fae5', border: '1px solid #6ee7b7', borderRadius: 12,
+                  padding: '16px 20px', marginBottom: 20, fontSize: 14, color: '#065f46',
+                  display: 'flex', alignItems: 'center', gap: 10,
+                }}>
+                  <i className="fa-regular fa-circle-check" style={{ fontSize: 20 }} />
+                  {success}
+                </div>
+              )}
+              {error && (
+                <div style={{
+                  background: '#fee2e2', border: '1px solid #fca5a5', borderRadius: 12,
+                  padding: '16px 20px', marginBottom: 20, fontSize: 14, color: '#991b1b',
+                  display: 'flex', alignItems: 'center', gap: 10,
+                }}>
+                  <i className="fa-regular fa-circle-exclamation" style={{ fontSize: 20 }} />
+                  {error}
+                </div>
+              )}
+              <form className="contact-form" onSubmit={handleSubmit}>
                 <div className="contact-form-row">
                   <div className="contact-form-group">
-                    <label htmlFor="fname"><i className="fa-regular fa-user"></i> Your Name</label>
-                    <input type="text" placeholder="John Doe" name="fname" id="fname" />
+                    <label htmlFor="name"><i className="fa-regular fa-user"></i> Your Name</label>
+                    <input type="text" placeholder="John Doe" name="name" id="name" value={form.name} onChange={handleChange} />
                   </div>
                   <div className="contact-form-group">
                     <label htmlFor="email"><i className="fa-regular fa-envelope"></i> Email Address</label>
-                    <input type="email" placeholder="john@example.com" name="email" id="email" />
+                    <input type="email" placeholder="john@example.com" name="email" id="email" value={form.email} onChange={handleChange} />
                   </div>
                 </div>
                 <div className="contact-form-row">
                   <div className="contact-form-group">
                     <label htmlFor="phone"><i className="fa-regular fa-phone"></i> Phone Number</label>
-                    <input type="tel" placeholder="+1 234 567 890" name="phone" id="phone" />
+                    <input type="tel" placeholder="+1 234 567 890" name="phone" id="phone" value={form.phone} onChange={handleChange} />
                   </div>
                   <div className="contact-form-group">
                     <label htmlFor="subject"><i className="fa-regular fa-tag"></i> Subject</label>
-                    <select name="subject" id="subject">
+                    <select name="subject" id="subject" value={form.subject} onChange={handleChange}>
                       <option value="">Select a subject</option>
                       <option value="order">Order Inquiry</option>
                       <option value="prescription">Prescription Question</option>
@@ -116,12 +169,12 @@ function Contact() {
                   </div>
                 </div>
                 <div className="contact-form-group">
-                  <label htmlFor="msg"><i className="fa-regular fa-message"></i> Your Message</label>
-                  <textarea placeholder="Write your message here..." rows={5} name="msg" id="msg" />
+                  <label htmlFor="message"><i className="fa-regular fa-message"></i> Your Message</label>
+                  <textarea placeholder="Write your message here..." rows={5} name="message" id="message" value={form.message} onChange={handleChange} />
                 </div>
                 <div className="contact-form-footer">
-                  <button type="submit" id="submit" className="contact-submit-btn">
-                    <span>Send Message</span>
+                  <button type="submit" className="contact-submit-btn" disabled={loading}>
+                    <span>{loading ? 'Sending...' : 'Send Message'}</span>
                     <i className="fa-regular fa-paper-plane"></i>
                   </button>
                 </div>

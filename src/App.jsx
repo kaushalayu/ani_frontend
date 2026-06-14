@@ -9,6 +9,7 @@ import SingleProduct from './Pages/SingleProduct'
 import Cart from './Pages/Cart'
 import Checkout from './Pages/Checkout'
 import Blog from './Pages/Blog'
+import BlogDetail from './Pages/BlogDetail'
 import Contact from './Pages/Contact'
 import Login from './Pages/Login'
 import FAQ from './Pages/FAQ'
@@ -26,6 +27,8 @@ import Wishlist from './Pages/Wishlist'
 import ComingSoon from './Pages/ComingSoon'
 import JoinNow from './Pages/JoinNow'
 import ThankYou from './Pages/ThankYou'
+import MyOrders from './Pages/MyOrders'
+import Profile from './Pages/Profile'
 import LoadMore from './Pages/LoadMore'
 import ThreeColumnSidebar from './Pages/ThreeColumnSidebar'
 
@@ -40,6 +43,11 @@ import AdminUsers from './admin/pages/Users'
 import AdminCategories from './admin/pages/Categories'
 import AdminBlogs from './admin/pages/Blogs'
 import AdminSeo from './admin/pages/Seo'
+import AdminContactMessages from './admin/pages/ContactMessages'
+import AdminTestimonials from './admin/pages/Testimonials'
+import AdminFaqs from './admin/pages/Faqs'
+import AdminTeam from './admin/pages/Team'
+import AdminSiteServices from './admin/pages/Services'
 
 // Setup
 import AdminSetup from './Pages/AdminSetup'
@@ -54,6 +62,7 @@ function App() {
         <Route path="shop" element={<Shop />} />
         <Route path="product/:id" element={<SingleProduct />} />
         <Route path="blog" element={<Blog />} />
+        <Route path="blog/:id" element={<BlogDetail />} />
         <Route path="contact" element={<Contact />} />
         <Route path="login" element={<Login />} />
         <Route path="join-now" element={<JoinNow />} />
@@ -85,6 +94,14 @@ function App() {
           path="thank-you"
           element={<ProtectedRoute><ThankYou /></ProtectedRoute>}
         />
+        <Route
+          path="my-orders"
+          element={<ProtectedRoute><MyOrders /></ProtectedRoute>}
+        />
+        <Route
+          path="profile"
+          element={<ProtectedRoute><Profile /></ProtectedRoute>}
+        />
 
         <Route path="*" element={<NotFound />} />
       </Route>
@@ -104,6 +121,11 @@ function App() {
         <Route path="categories" element={<AdminCategories />} />
         <Route path="blogs" element={<AdminBlogs />} />
         <Route path="seo" element={<AdminSeo />} />
+        <Route path="testimonials" element={<AdminTestimonials />} />
+        <Route path="faqs" element={<AdminFaqs />} />
+        <Route path="team" element={<AdminTeam />} />
+        <Route path="services" element={<AdminSiteServices />} />
+        <Route path="messages" element={<AdminContactMessages />} />
       </Route>
     </Routes>
   )

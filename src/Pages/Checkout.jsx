@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../Context/CartContext'
 import { useAuth } from '../Context/AuthContext'
@@ -23,6 +23,7 @@ function Checkout() {
   const [selectedPay, setSelectedPay] = useState('whatsapp')
   const [selectedSubPay, setSelectedSubPay] = useState('')
   const [placing, setPlacing] = useState(false)
+  const [formErrors, setFormErrors] = useState({})
 
   const fnameRef = useRef(null)
   const lnameRef = useRef(null)
@@ -35,15 +36,18 @@ function Checkout() {
   const shipping = cart.length > 0 ? 8.00 : 0
   const grandTotal = subtotal + shipping
 
-  const handlePlaceOrder = async () => {
-    const fname = fnameRef.current.value.trim()
-    const lname = lnameRef.current.value.trim()
-    const email = emailRef.current.value.trim()
+  const handlePlaceOrder = useCallback(async () => {
+    const fname = fnameRef.current?.value.trim() || ''
+    const lname = lnameRef.current?.value.trim() || ''
+    const email = emailRef.current?.value.trim() || ''
 
-    if (!fname || !lname || !email) {
-      alert('Please fill in all required billing fields.')
-      return
-    }
+    const errors = {}
+    if (!fname) errors.fname = 'First name is required'
+    if (!lname) errors.lname = 'Last name is required'
+    if (!email) errors.email = 'Email is required'
+    else if (!/\S+@\S+\.\S+/.test(email)) errors.email = 'Invalid email format'
+    setFormErrors(errors)
+    if (Object.keys(errors).length > 0) return
 
     if (cart.length === 0) {
       alert('Your cart is empty.')
@@ -79,7 +83,7 @@ function Checkout() {
         totalPrice: grandTotal,
       }
 
-      await API.post('/orders', orderData)
+      const { data: orderResponse } = await API.post('/orders', orderData)
 
       // 2. Build WhatsApp / Email message (same as before)
       const customerName = `${fname} ${lname}`
@@ -125,11 +129,25 @@ function Checkout() {
       } else {
         const subject = encodeURIComponent(`New Order from ${customerName}`)
         const body = encodeURIComponent(message)
-        window.location.href = `mailto:Info@pharmez.com?subject=${subject}&body=${body}`
+        window.location.href = `mailto:support@pharmez.com?subject=${subject}&body=${body}`
       }
 
-      // 5. Redirect to thank you page
-      navigate('/thank-you')
+      // 5. Redirect to thank you page — pass order summary
+      navigate('/thank-you', {
+        state: {
+          orderId: orderResponse?.order?._id || null,
+          customerName: `${fname} ${lname}`,
+          email,
+          items: cart.map(item => ({
+            name: item.name,
+            qty: item.qty,
+            price: item.price,
+            pills: item.pills || null,
+          })),
+          total: grandTotal,
+          paymentMethod: selectedPay,
+        },
+      })
 
     } catch (err) {
       console.error(err)
@@ -137,7 +155,7 @@ function Checkout() {
     } finally {
       setPlacing(false)
     }
-  }
+  }, [cart, clearCart, selectedPay, selectedSubPay, grandTotal, subtotal, shipping, navigate])
 
   return (
     <div className="checkout-page">
@@ -165,7 +183,9 @@ function Checkout() {
                       id="fname"
                       ref={fnameRef}
                       defaultValue={user?.name?.split(' ')[0] || ''}
+                      style={formErrors.fname ? { borderColor: '#ef4444' } : {}}
                     />
+                    {formErrors.fname && <span style={{ color: '#ef4444', fontSize: 12 }}>{formErrors.fname}</span>}
                   </div>
                   <div className="form-group">
                     <label htmlFor="lname">Last name *</label>
@@ -174,7 +194,9 @@ function Checkout() {
                       id="lname"
                       ref={lnameRef}
                       defaultValue={user?.name?.split(' ').slice(1).join(' ') || ''}
+                      style={formErrors.lname ? { borderColor: '#ef4444' } : {}}
                     />
+                    {formErrors.lname && <span style={{ color: '#ef4444', fontSize: 12 }}>{formErrors.lname}</span>}
                   </div>
                 </div>
                 <div className="form-group full">
@@ -184,30 +206,54 @@ function Checkout() {
                     id="email"
                     ref={emailRef}
                     defaultValue={user?.email || ''}
+                    style={formErrors.email ? { borderColor: '#ef4444' } : {}}
                   />
+                  {formErrors.email && <span style={{ color: '#ef4444', fontSize: 12 }}>{formErrors.email}</span>}
                 </div>
                 <div className="form-row">
                   <div className="form-group">
                     <label>State</label>
                     <select ref={stateRef} defaultValue="">
                       <option value="" disabled hidden>Select State</option>
-                      <option value="California">California</option>
-                      <option value="Texas">Texas</option>
-                      <option value="Florida">Florida</option>
-                      <option value="New York">New York</option>
+                      <option value="Andhra Pradesh">Andhra Pradesh</option>
+                      <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                      <option value="Assam">Assam</option>
+                      <option value="Bihar">Bihar</option>
+                      <option value="Chhattisgarh">Chhattisgarh</option>
+                      <option value="Delhi">Delhi</option>
+                      <option value="Goa">Goa</option>
+                      <option value="Gujarat">Gujarat</option>
+                      <option value="Haryana">Haryana</option>
+                      <option value="Himachal Pradesh">Himachal Pradesh</option>
+                      <option value="Jharkhand">Jharkhand</option>
+                      <option value="Karnataka">Karnataka</option>
+                      <option value="Kerala">Kerala</option>
+                      <option value="Madhya Pradesh">Madhya Pradesh</option>
+                      <option value="Maharashtra">Maharashtra</option>
+                      <option value="Manipur">Manipur</option>
+                      <option value="Meghalaya">Meghalaya</option>
+                      <option value="Mizoram">Mizoram</option>
+                      <option value="Nagaland">Nagaland</option>
+                      <option value="Odisha">Odisha</option>
+                      <option value="Punjab">Punjab</option>
+                      <option value="Rajasthan">Rajasthan</option>
+                      <option value="Sikkim">Sikkim</option>
+                      <option value="Tamil Nadu">Tamil Nadu</option>
+                      <option value="Telangana">Telangana</option>
+                      <option value="Tripura">Tripura</option>
+                      <option value="Uttar Pradesh">Uttar Pradesh</option>
+                      <option value="Uttarakhand">Uttarakhand</option>
+                      <option value="West Bengal">West Bengal</option>
                       <option value="Other">Other</option>
                     </select>
                   </div>
                   <div className="form-group">
                     <label>City</label>
-                    <select ref={cityRef} defaultValue="">
-                      <option value="" disabled hidden>Select City</option>
-                      <option value="Los Angeles">Los Angeles</option>
-                      <option value="San Francisco">San Francisco</option>
-                      <option value="San Diego">San Diego</option>
-                      <option value="Houston">Houston</option>
-                      <option value="Other">Other</option>
-                    </select>
+                    <input
+                      type="text"
+                      placeholder="Enter your city"
+                      ref={cityRef}
+                    />
                   </div>
                 </div>
                 <div className="form-group half">

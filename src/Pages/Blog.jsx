@@ -9,7 +9,6 @@ function Blog() {
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  const [total, setTotal] = useState(0)
   const LIMIT = 9
 
   // Fetch categories once
@@ -32,7 +31,6 @@ function Blog() {
         if (data.success) {
           setBlogs(data.blogs)
           setTotalPages(data.pages)
-          setTotal(data.total)
         }
       })
       .catch(() => setBlogs([]))
@@ -135,13 +133,13 @@ function Blog() {
                               <i className="fas fa-tag" /> {post.category}
                             </li>
                           </ul>
-                          <h4><Link to="/blog">{post.title}</Link></h4>
+                          <h4><Link to={`/blog/${post._id}`}>{post.title}</Link></h4>
                           <p>
                             {post.excerpt || post.content?.slice(0, 120)}
                             {(post.content?.length > 120) ? '...' : ''}
                           </p>
                           <div className="generic-btn2">
-                            <Link to="/blog">Read More</Link>
+                            <Link to={`/blog/${post._id}`}>Read More</Link>
                           </div>
                         </div>
                       </div>

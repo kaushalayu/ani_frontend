@@ -6,9 +6,15 @@ function Login() {
   const { login, loading } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const from = location.state?.from?.pathname || '/'
 
-  const [form, setForm] = useState({ email: '', password: '' })
+  // Support both React Router state and ?redirect= query param
+  const searchParams = new URLSearchParams(location.search)
+  const redirectParam = searchParams.get('redirect')
+  const from = location.state?.from?.pathname || redirectParam || '/'
+
+  const rememberedEmail = localStorage.getItem('pharmez_remember_email') || ''
+  const [form, setForm] = useState({ email: rememberedEmail, password: '' })
+  const [remember, setRemember] = useState(!!rememberedEmail)
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
 
@@ -20,13 +26,17 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    if (remember) {
+      localStorage.setItem('pharmez_remember_email', form.email)
+    } else {
+      localStorage.removeItem('pharmez_remember_email')
+    }
     const result = await login(form.email, form.password)
     if (result.success) {
-      // Redirect admin to admin panel, users back to where they came from
       if (result.role === 'admin') {
-        navigate('/admin')
+        navigate('/admin', { replace: true })
       } else {
-        navigate(from, { replace: true })
+        navigate(from === '/login' ? '/' : from, { replace: true })
       }
     } else {
       setError(result.message)
@@ -101,7 +111,7 @@ function Login() {
 
               <div className="login-extra">
                 <label>
-                  <input type="checkbox" name="remember" />
+                  <input type="checkbox" name="remember" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
                   Remember me
                 </label>
                 <Link to="/contact" className="forgot-password">Forgot password?</Link>

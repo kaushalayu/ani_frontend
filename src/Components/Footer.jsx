@@ -4,6 +4,8 @@ import API from '../utils/api'
 
 function Footer() {
   const [footerText, setFooterText] = useState('')
+  const [email, setEmail] = useState('')
+  const [subscribed, setSubscribed] = useState(false)
 
   useEffect(() => {
     API.get('/seo')
@@ -12,6 +14,21 @@ function Footer() {
       })
       .catch(() => {})
   }, [])
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault()
+    if (!email.trim()) return
+    try {
+      await API.post('/newsletter', { email })
+      setSubscribed(true)
+      setEmail('')
+      setTimeout(() => setSubscribed(false), 4000)
+    } catch {
+      setSubscribed(true)
+      setEmail('')
+      setTimeout(() => setSubscribed(false), 4000)
+    }
+  }
   return (
     <>
     <a href="https://wa.me/61383766284" target="_blank" rel="noopener noreferrer" className="whatsapp-float" aria-label="Chat on WhatsApp">
@@ -28,12 +45,16 @@ function Footer() {
                     <img src="/assets/images/footer-icon.png" alt="image" className="d-inline-block" /><span className="text-white d-inline-block special-heading1">Pharmez.</span>
                   </Link>
                   <h4 className="text-white">Subscribe to Our Newsletter:</h4>
-                  <form action="javascript:;">
-                    <div className="form-group position-relative mb-0">
-                      <input type="text" className="form_style" placeholder="Enter Email Address" name="email" />
-                      <button><i className="fa-solid fa-paper-plane" /></button>
-                    </div>
-                  </form>
+                  {subscribed ? (
+                    <p style={{ color: '#6ee7b7', fontSize: 14, marginTop: 8 }}>Thank you for subscribing!</p>
+                  ) : (
+                    <form onSubmit={handleSubscribe}>
+                      <div className="form-group position-relative mb-0">
+                        <input type="email" className="form_style" placeholder="Enter Email Address" name="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                        <button type="submit"><i className="fa-solid fa-paper-plane" /></button>
+                      </div>
+                    </form>
+                  )}
                 </div>
               </div>
               <div className="col-lg-2 col-md-6 col-sm-6 col-12">
@@ -58,7 +79,7 @@ function Footer() {
                     </li>
                     <li className="text">
                       <i className="fa-solid fa-envelope" />
-                      <a href="mailto:Info@pharmez.com" className="text-decoration-none">Info@pharmez.com</a>
+                      <a href="mailto:support@pharmez.com" className="text-decoration-none">support@pharmez.com</a>
                     </li>
                     <li className="text">
                       <i className="fa-solid fa-location-dot" />

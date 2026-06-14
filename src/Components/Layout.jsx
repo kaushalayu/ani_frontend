@@ -7,7 +7,6 @@ import ErrorBoundary from './ErrorBoundary'
 import SeoUpdater from './SeoUpdater'
 import { CartProvider } from '../Context/CartContext'
 import { WishlistProvider } from '../Context/WishlistContext'
-import { AuthProvider } from '../Context/AuthContext'
 import { ToastProvider } from './Toast'
 
 function BackToTop() {
@@ -62,10 +61,9 @@ function SearchOverlay() {
 function Layout() {
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <CartProvider>
-          <WishlistProvider>
-            <ToastProvider>
+      <CartProvider>
+        <WishlistProvider>
+          <ToastProvider>
             <SeoUpdater />
             <Preloader />
             <BackToTop />
@@ -78,7 +76,6 @@ function Layout() {
           </ToastProvider>
         </WishlistProvider>
       </CartProvider>
-    </AuthProvider>
     </ErrorBoundary>
   )
 }

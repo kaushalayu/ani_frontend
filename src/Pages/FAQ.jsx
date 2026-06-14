@@ -1,35 +1,18 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-
-const faqData = [
-  {
-    question: 'How do I place an order?',
-    answer: 'Simply browse our shop, add items to your cart, and proceed to checkout. Fill in your details and choose a payment method to complete your order.'
-  },
-  {
-    question: 'What payment methods do you accept?',
-    answer: 'We accept payments via WhatsApp and Email. You can send your order details through either method and our team will assist you with the payment process.'
-  },
-  {
-    question: 'How long does delivery take?',
-    answer: 'Standard delivery takes 3-5 business days. Express delivery is available within 24-48 hours for an additional fee. Free shipping is available on orders over $200.'
-  },
-  {
-    question: 'Can I return a product?',
-    answer: 'Yes, we offer a 30-day money-back guarantee. If you are not satisfied with your purchase, contact our support team to initiate a return.'
-  },
-  {
-    question: 'Do I need a prescription for medicines?',
-    answer: 'Over-the-counter medicines can be purchased directly. Prescription medicines require a valid prescription from a licensed healthcare provider.'
-  },
-  {
-    question: 'How can I contact customer support?',
-    answer: 'You can reach us via phone at +61 3 8376 6284 or email at Info@pharmez.com. Our support team is available 24/7 to assist you.'
-  }
-]
+import API from '../utils/api'
 
 function FAQ() {
+  const [faqs, setFaqs] = useState([])
+  const [loading, setLoading] = useState(true)
   const [openIndex, setOpenIndex] = useState(null)
+
+  useEffect(() => {
+    API.get('/faqs')
+      .then(({ data }) => setFaqs(data.faqs))
+      .catch(() => setFaqs([]))
+      .finally(() => setLoading(false))
+  }, [])
 
   const toggleFAQ = (index) => {
     setOpenIndex(openIndex === index ? null : index)
@@ -61,17 +44,28 @@ function FAQ() {
           <div className="row justify-content-center">
             <div className="col-lg-8 col-12">
               <div className="faq-list">
-                {faqData.map((item, index) => (
-                  <div key={index} className={`faq-item${openIndex === index ? ' open' : ''}`}>
-                    <div className="faq-question" onClick={() => toggleFAQ(index)}>
-                      <span>{item.question}</span>
-                      <i className="fa-solid fa-chevron-down" />
-                    </div>
-                    <div className="faq-answer" style={{ display: openIndex === index ? 'block' : 'none' }}>
-                      {item.answer}
-                    </div>
+                {loading ? (
+                  <div style={{ textAlign: 'center', padding: '60px 0', color: '#888' }}>
+                    <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: 32, marginBottom: 12 }} />
+                    <p>Loading FAQs...</p>
                   </div>
-                ))}
+                ) : faqs.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '60px 0', color: '#888' }}>
+                    <p>No FAQs available at the moment.</p>
+                  </div>
+                ) : (
+                  faqs.map((item, index) => (
+                    <div key={item._id} className={`faq-item${openIndex === index ? ' open' : ''}`}>
+                      <div className="faq-question" onClick={() => toggleFAQ(index)}>
+                        <span>{item.question}</span>
+                        <i className="fa-solid fa-chevron-down" />
+                      </div>
+                      <div className="faq-answer" style={{ display: openIndex === index ? 'block' : 'none' }}>
+                        {item.answer}
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>

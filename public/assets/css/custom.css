@@ -1215,6 +1215,12 @@
     min-height: 200px;
     overflow: hidden;
 }
+.shop-con .premium-card-img a {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .shop-con .premium-card-img figure {
     width: 100%;
     display: flex;
@@ -1226,9 +1232,10 @@
     transform: scale(1.08);
 }
 .shop-con .premium-card-img figure img {
-    max-height: 140px;
-    width: auto;
+    width: 100%;
+    height: 140px;
     object-fit: contain;
+    object-position: center;
     transition: all 0.5s ease;
 }
 .shop-con .premium-card-badge {
@@ -1641,7 +1648,7 @@
         padding: 16px;
     }
     .shop-con .premium-card-img figure img {
-        max-height: 100px;
+        height: 100px;
     }
     .shop-con .premium-card-body {
         padding: 12px 14px 14px;
@@ -1659,7 +1666,7 @@
         padding: 12px;
     }
     .shop-con .premium-card-img figure img {
-        max-height: 80px;
+        height: 80px;
     }
     .shop-con .premium-card-body {
         padding: 10px 10px 12px;
@@ -1714,7 +1721,7 @@
         padding: 10px;
     }
     .shop-con .premium-card-img figure img {
-        max-height: 65px;
+        height: 65px;
     }
     .shop-con .premium-card-rating {
         font-size: 11px;
@@ -2745,6 +2752,12 @@
     min-height: 200px;
     overflow: hidden;
 }
+.services-featured-section .premium-card-img a {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .services-featured-section .premium-card-img figure {
     width: 100%;
     display: flex;
@@ -2756,9 +2769,10 @@
     transform: scale(1.08);
 }
 .services-featured-section .premium-card-img figure img {
-    max-height: 140px;
-    width: auto;
+    width: 100%;
+    height: 140px;
     object-fit: contain;
+    object-position: center;
     transition: all 0.5s ease;
 }
 .services-featured-section .premium-card-badge {
@@ -2928,7 +2942,7 @@
         padding: 16px;
     }
     .services-featured-section .premium-card-img figure img {
-        max-height: 100px;
+        height: 100px;
     }
     .services-featured-section .premium-card-body {
         padding: 12px 14px 14px;
@@ -2965,7 +2979,7 @@
         padding: 12px;
     }
     .services-featured-section .premium-card-img figure img {
-        max-height: 75px;
+        height: 75px;
     }
     .services-featured-section .premium-card-wishlist {
         opacity: 1;

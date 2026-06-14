@@ -20,11 +20,6 @@ function ProductCard({ product, layout = 'grid' }) {
       ? product.pillsOptions[0].price
       : product.price || 0
 
-  const oldPrice =
-    product.hasPillsOptions && product.pillsOptions?.length > 0
-      ? product.pillsOptions[0].oldPrice
-      : product.oldPrice || 0
-
   // Image URL — handles both /uploads/ (backend) and /assets/ (static)
   const imgSrc = product.image?.startsWith('/uploads')
     ? `${import.meta.env.VITE_API_URL}${product.image}`

@@ -37,5 +37,7 @@ export function WishlistProvider({ children }) {
 }
 
 export function useWishlist() {
-  return useContext(WishlistContext)
+  const ctx = useContext(WishlistContext)
+  if (!ctx) throw new Error('useWishlist must be used within a WishlistProvider')
+  return ctx
 }

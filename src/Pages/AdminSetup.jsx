@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import API from '../utils/api'
 
 function AdminSetup() {
-  const navigate = useNavigate()
   const [status, setStatus] = useState(null)   // null = loading, true = admin exists, false = no admin
   const [checking, setChecking] = useState(true)
   const [form, setForm] = useState({ name: '', email: '', password: '', setupKey: '' })
@@ -46,7 +45,7 @@ function AdminSetup() {
         // Save token & user so they're auto logged in
         localStorage.setItem('pharmez_token', data.token)
         localStorage.setItem('pharmez_user', JSON.stringify(data.user))
-        setTimeout(() => navigate('/admin'), 2000)
+        setTimeout(() => window.location.href = '/admin', 2000)
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create admin.')

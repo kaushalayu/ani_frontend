@@ -5,22 +5,18 @@ import { useWishlist } from '../Context/WishlistContext'
 import { useAuth } from '../Context/AuthContext'
 import { useToast } from '../Components/Toast'
 import { useSingleProduct, useProducts } from '../hooks/useProducts'
-import ProductCard from '../Components/ProductCard'
 import API from '../utils/api'
 import './SingleProduct.css'
 
 function SingleProduct() {
   const { id } = useParams()
-  const navigate = useNavigate()
   const { product, loading, error } = useSingleProduct(id)
   const { products: relatedProducts } = useProducts({ limit: 8 })
+  const navigate = useNavigate()
 
   const [selectedPillsIdx, setSelectedPillsIdx] = useState(0)
   const [quantity, setQuantity] = useState(1)
-  const [faqOpen, setFaqOpen] = useState(0)
   const [reviewStars, setReviewStars] = useState(0)
-  const [reviewName, setReviewName] = useState('')
-  const [reviewEmail, setReviewEmail] = useState('')
   const [reviewComment, setReviewComment] = useState('')
 
   const { addToCart } = useCart()

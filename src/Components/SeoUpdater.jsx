@@ -1,14 +1,23 @@
 import { useEffect } from 'react'
 import API from '../utils/api'
 
+// Module-level cache — fetch SEO only once per browser session
+let seoFetched = false
+
 function SeoUpdater() {
   useEffect(() => {
+    // Skip if already fetched in this session
+    if (seoFetched) return
+
     let cancelled = false
 
     const fetchSeo = async () => {
       try {
         const { data } = await API.get('/seo')
         if (cancelled || !data.seo) return
+
+        // Mark as fetched so subsequent navigations skip this call
+        seoFetched = true
 
         const s = data.seo
 
@@ -48,13 +57,9 @@ function SeoUpdater() {
         if (s.siteIcon) {
           const iconUrl = `${import.meta.env.VITE_API_URL}${s.siteIcon}`
           let link = document.querySelector('link[rel="icon"]')
-          if (link) {
-            link.href = iconUrl
-          }
+          if (link) link.href = iconUrl
           let appleLink = document.querySelector('link[rel="apple-touch-icon"]')
-          if (appleLink) {
-            appleLink.href = iconUrl
-          }
+          if (appleLink) appleLink.href = iconUrl
         }
       } catch (err) {
         console.error('SeoUpdater: failed to fetch SEO', err)

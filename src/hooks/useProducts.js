@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import API from '../utils/api'
 
 /**
@@ -12,12 +12,16 @@ export function useProducts(params = {}) {
   const [total, setTotal] = useState(0)
   const [pages, setPages] = useState(1)
 
-  const fetchProducts = async () => {
+  // Stable serialized key — avoids stale closure issues
+  const paramKey = useMemo(() => JSON.stringify(params), [params])
+
+  const fetchProducts = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
       const query = new URLSearchParams()
-      Object.entries(params).forEach(([k, v]) => {
+      const parsed = JSON.parse(paramKey)
+      Object.entries(parsed).forEach(([k, v]) => {
         if (v !== undefined && v !== null && v !== '') query.append(k, v)
       })
       const { data } = await API.get(`/products?${query}`)
@@ -29,11 +33,11 @@ export function useProducts(params = {}) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [paramKey])
 
   useEffect(() => {
     fetchProducts()
-  }, [JSON.stringify(params)])
+  }, [fetchProducts])
 
   return { products, loading, error, total, pages, refetch: fetchProducts }
 }

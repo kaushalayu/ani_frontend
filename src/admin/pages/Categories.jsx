@@ -1,12 +1,33 @@
 import { useEffect, useState } from 'react'
 import API from '../../utils/api'
 
+// Badge hint — admin ko dikhao kaunsi category kaunse badge se products filter karti hai
+const BADGE_HINTS = {
+  'sleeping pills': { badge: 'sleep aid', color: '#6366f1', icon: '😴' },
+  'painkillers':    { badge: 'painkillers', color: '#0f766e', icon: '💊' },
+  'anxiety pills':  { badge: 'calm', color: '#7c3aed', icon: '🧘' },
+}
+
+const getBadgeHint = (name = '') => {
+  const key = name.toLowerCase().trim()
+  for (const [k, v] of Object.entries(BADGE_HINTS)) {
+    if (key.includes(k.split(' ')[0])) return v
+  }
+  return null
+}
+
 function AdminCategories() {
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [form, setForm] = useState({ name: '', description: '' })
   const [editId, setEditId] = useState(null)
   const [saving, setSaving] = useState(false)
+  const [toast, setToast] = useState(null)
+
+  const showToast = (msg, type = 'success') => {
+    setToast({ msg, type })
+    setTimeout(() => setToast(null), 3000)
+  }
 
   const fetchCategories = async () => {
     setLoading(true)
@@ -29,14 +50,16 @@ function AdminCategories() {
     try {
       if (editId) {
         await API.put(`/categories/${editId}`, form)
+        showToast('Category updated!')
       } else {
         await API.post('/categories', form)
+        showToast('Category created!')
       }
       setForm({ name: '', description: '' })
       setEditId(null)
       fetchCategories()
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to save')
+      showToast(err.response?.data?.message || 'Failed to save', 'error')
     } finally {
       setSaving(false)
     }
@@ -49,12 +72,13 @@ function AdminCategories() {
   }
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this category?')) return
+    if (!window.confirm('Delete this category? Products in this category may be affected.')) return
     try {
       await API.delete(`/categories/${id}`)
+      showToast('Category deleted')
       fetchCategories()
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to delete')
+      showToast(err.response?.data?.message || 'Failed to delete', 'error')
     }
   }
 
@@ -66,9 +90,52 @@ function AdminCategories() {
   return (
     <div>
       <div className="admin-page-header">
-        <h1><i className="fa-solid fa-tags" style={{ marginRight: 10, color: 'var(--primary)' }} />Categories</h1>
+        <h1>
+          <i className="fa-solid fa-tags" />
+          Categories
+          <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-light)', marginLeft: 8 }}>
+            ({categories.length})
+          </span>
+        </h1>
       </div>
 
+      {/* Toast */}
+      {toast && (
+        <div className={`admin-toast admin-toast-${toast.type}`}>
+          <i className={`fa-solid ${toast.type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark'}`} />
+          {toast.msg}
+        </div>
+      )}
+
+      {/* Info box about badge system */}
+      <div style={{
+        background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 12,
+        padding: '14px 18px', marginBottom: 22,
+        display: 'flex', gap: 12, alignItems: 'flex-start',
+      }}>
+        <i className="fa-solid fa-circle-info" style={{ color: '#f59e0b', fontSize: 18, marginTop: 2, flexShrink: 0 }} />
+        <div>
+          <strong style={{ fontSize: 13, color: '#92400e' }}>Product → Category Badge Mapping:</strong>
+          <p style={{ fontSize: 12.5, color: '#78350f', margin: '4px 0 0' }}>
+            Products appear in Navbar submenus based on their <strong>Badge</strong> field, not category name.
+            When adding a product, set the badge accordingly:
+          </p>
+          <div style={{ display: 'flex', gap: 12, marginTop: 8, flexWrap: 'wrap' }}>
+            {Object.entries(BADGE_HINTS).map(([cat, hint]) => (
+              <span key={cat} style={{
+                display: 'inline-flex', alignItems: 'center', gap: 5,
+                padding: '4px 12px', borderRadius: 20,
+                background: hint.color + '18', border: `1px solid ${hint.color}44`,
+                fontSize: 12, fontWeight: 600, color: hint.color,
+              }}>
+                {hint.icon} {cat.charAt(0).toUpperCase() + cat.slice(1)} → badge: <code style={{ fontFamily: 'monospace' }}>{hint.badge}</code>
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Add/Edit form */}
       <div className="admin-form-card" style={{ marginBottom: 24 }}>
         <div className="admin-section-title">
           <i className={`fa-solid ${editId ? 'fa-pen' : 'fa-plus'}`} />
@@ -77,20 +144,20 @@ function AdminCategories() {
         <form onSubmit={handleSubmit}>
           <div className="admin-form-grid" style={{ gridTemplateColumns: '1fr 2fr' }}>
             <div className="admin-form-group">
-              <label>Category Name *</label>
+              <label>Category Name <span style={{ color: 'var(--danger)' }}>*</span></label>
               <input
                 value={form.name}
                 onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-                placeholder="e.g. Vitamins & Supplements"
+                placeholder="e.g. Sleeping Pills"
                 required
               />
             </div>
             <div className="admin-form-group">
-              <label>Description</label>
+              <label>Description <span style={{ fontSize: 11, color: 'var(--text-light)' }}>(optional)</span></label>
               <input
                 value={form.description}
                 onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
-                placeholder="Optional description"
+                placeholder="Short description of this category"
               />
             </div>
           </div>
@@ -108,19 +175,24 @@ function AdminCategories() {
         </form>
       </div>
 
+      {/* Categories table */}
       <div className="admin-table-card">
         <div className="admin-table-header">
-          <h2>All Categories ({categories.length})</h2>
+          <h2><i className="fa-solid fa-list" /> All Categories ({categories.length})</h2>
         </div>
 
         {loading ? (
           <div className="admin-loading">
             <div className="admin-loader" />
+            <div>Loading categories...</div>
           </div>
         ) : categories.length === 0 ? (
           <div className="admin-empty">
-            <i className="fa-solid fa-tag" style={{ fontSize: 32, display: 'block', marginBottom: 8, color: 'var(--text-light)' }} />
-            No categories yet. Add one above!
+            <i className="fa-solid fa-tag" style={{ fontSize: 36, display: 'block', marginBottom: 12 }} />
+            <p>No categories yet.</p>
+            <p style={{ fontSize: 13, color: 'var(--text-light)', marginTop: 4 }}>
+              Start the backend server — it will auto-create Sleeping Pills, Painkillers &amp; Anxiety Pills.
+            </p>
           </div>
         ) : (
           <table className="admin-table">
@@ -129,34 +201,60 @@ function AdminCategories() {
                 <th>Name</th>
                 <th>Slug</th>
                 <th>Description</th>
+                <th>Navbar Badge</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {categories.map((cat) => (
-                <tr key={cat._id}>
-                  <td style={{ fontWeight: 600 }}>{cat.name}</td>
-                  <td style={{ fontFamily: 'monospace', fontSize: 12, color: 'var(--text-secondary)' }}>{cat.slug}</td>
-                  <td style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{cat.description || '—'}</td>
-                  <td>
-                    <span className={`status-badge ${cat.isActive ? 'status-delivered' : 'status-cancelled'}`}>
-                      <i className={`fa-solid ${cat.isActive ? 'fa-eye' : 'fa-eye-slash'}`} style={{ marginRight: 4 }} />
-                      {cat.isActive ? 'Active' : 'Hidden'}
-                    </span>
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', gap: 6 }}>
-                      <button className="admin-btn admin-btn-outline admin-btn-xs" onClick={() => handleEdit(cat)}>
-                        <i className="fa-solid fa-pen" /> Edit
-                      </button>
-                      <button className="admin-btn admin-btn-danger admin-btn-xs" onClick={() => handleDelete(cat._id)}>
-                        <i className="fa-solid fa-trash" /> Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {categories.map((cat) => {
+                const hint = getBadgeHint(cat.name)
+                return (
+                  <tr key={cat._id}>
+                    <td style={{ fontWeight: 600, fontSize: 13.5 }}>{cat.name}</td>
+                    <td style={{ fontFamily: 'monospace', fontSize: 12, color: 'var(--text-secondary)' }}>
+                      {cat.slug}
+                    </td>
+                    <td style={{ fontSize: 13, color: 'var(--text-secondary)', maxWidth: 200 }}>
+                      <span style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        {cat.description || '—'}
+                      </span>
+                    </td>
+                    <td>
+                      {hint ? (
+                        <span style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 5,
+                          padding: '3px 10px', borderRadius: 20,
+                          background: hint.color + '18',
+                          border: `1px solid ${hint.color}44`,
+                          fontSize: 11.5, fontWeight: 700, color: hint.color,
+                          fontFamily: 'monospace',
+                        }}>
+                          {hint.icon} {hint.badge}
+                        </span>
+                      ) : (
+                        <span style={{ color: 'var(--text-light)', fontSize: 12 }}>—</span>
+                      )}
+                    </td>
+                    <td>
+                      <span className={`status-badge ${cat.isActive ? 'status-delivered' : 'status-cancelled'}`}>
+                        <i className={`fa-solid ${cat.isActive ? 'fa-eye' : 'fa-eye-slash'}`} />
+                        {cat.isActive ? 'Active' : 'Hidden'}
+                      </span>
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', gap: 6 }}>
+                        <button className="admin-btn admin-btn-outline admin-btn-xs" onClick={() => handleEdit(cat)}>
+                          <i className="fa-solid fa-pen" /> Edit
+                        </button>
+                        <button className="admin-btn admin-btn-danger admin-btn-xs" onClick={() => handleDelete(cat._id)}>
+                          <i className="fa-solid fa-trash" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         )}

@@ -54,5 +54,7 @@ export function CartProvider({ children }) {
 }
 
 export function useCart() {
-  return useContext(CartContext)
+  const ctx = useContext(CartContext)
+  if (!ctx) throw new Error('useCart must be used within a CartProvider')
+  return ctx
 }

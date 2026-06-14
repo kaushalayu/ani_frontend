@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import API from '../../utils/api'
 
 function AdminSeo() {
-  const [seo, setSeo] = useState(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [iconFile, setIconFile] = useState(null)
@@ -25,7 +24,6 @@ function AdminSeo() {
       try {
         const { data } = await API.get('/seo')
         if (data.seo) {
-          setSeo(data.seo)
           setForm({
             siteTitle: data.seo.siteTitle || '',
             siteDescription: data.seo.siteDescription || '',
@@ -37,8 +35,7 @@ function AdminSeo() {
           if (data.seo.siteIcon) setIconPreview(`${import.meta.env.VITE_API_URL}${data.seo.siteIcon}`)
           if (data.seo.ogImage) setOgPreview(`${import.meta.env.VITE_API_URL}${data.seo.ogImage}`)
         }
-      } catch (err) {
-        console.error(err)
+      } catch {
       } finally {
         setLoading(false)
       }
@@ -75,14 +72,13 @@ function AdminSeo() {
 
       const { data } = await API.get('/seo')
       if (data.seo) {
-        setSeo(data.seo)
         if (data.seo.siteIcon) setIconPreview(`${import.meta.env.VITE_API_URL}${data.seo.siteIcon}`)
         if (data.seo.ogImage) setOgPreview(`${import.meta.env.VITE_API_URL}${data.seo.ogImage}`)
       }
       setIconFile(null)
       setOgFile(null)
     } catch (err) {
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Failed to save SEO settings' })
+      setMessage({ type: 'error', text: err?.response?.data?.message || 'Failed to save SEO settings' })
     } finally {
       setSaving(false)
     }
