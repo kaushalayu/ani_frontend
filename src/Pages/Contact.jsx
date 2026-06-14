@@ -1,12 +1,21 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import API from '../utils/api'
 
 function Contact() {
+  const [seo, setSeo] = useState(null)
   const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' })
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(null)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    API.get('/seo')
+      .then(({ data }) => {
+        if (data.seo) setSeo(data.seo)
+      })
+      .catch(() => {})
+  }, [])
 
   const handleChange = (e) => {
     setForm(p => ({ ...p, [e.target.name]: e.target.value }))
@@ -33,6 +42,12 @@ function Contact() {
       setLoading(false)
     }
   }
+
+  const address = seo?.address || '121 King Street, Melbourne Victoria 3000 Australia'
+  const supportEmail = seo?.supportEmail || 'support@pharmez.com'
+  const contactPhone = seo?.contactPhone || '+61 3 8376 6284'
+  const businessHours = seo?.businessHours || 'Monday–Friday, 9 am–6 pm'
+  const mapUrl = seo?.mapEmbedUrl || 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.367176743588!2d144.95736461590413!3d-37.81813957974638!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad65cbce858f6d7%3A0x9cc486b305ba3fb1!2s21%20King%20St%2C%20Melbourne%20VIC%203000%2C%20Australia!5e0!3m2!1sen!2s!4v1669200882885!5m2!1sen!2s'
 
   return (
     <>
@@ -71,7 +86,7 @@ function Contact() {
                   <figure><img src="/assets/images/contact-location-icon.png" alt="location" className="img-fluid" /></figure>
                   <div className="contact-sub-con">
                     <h6>Our Location:</h6>
-                    <p className="mb-0">121 King Street, Melbourne Victoria 3000 Australia</p>
+                    <p className="mb-0">{address}</p>
                   </div>
                 </div>
               </div>
@@ -80,9 +95,7 @@ function Contact() {
                   <figure><img src="/assets/images/contact-email-icon.png" alt="email" className="img-fluid" /></figure>
                   <div className="contact-sub-con">
                     <h6>Email us at:</h6>
-                    <a href="mailto:support@pharmez.com" className="d-inline-block">support@pharmez.com</a>
-                    <div className="clearfix" />
-                    <a href="mailto:pharmez@gmail.com" className="d-inline-block">pharmez@gmail.com</a>
+                    <a href={`mailto:${supportEmail}`} className="d-inline-block">{supportEmail}</a>
                   </div>
                 </div>
               </div>
@@ -91,9 +104,7 @@ function Contact() {
                   <figure><img src="/assets/images/contact-phone-icon.png" alt="phone" className="img-fluid" /></figure>
                   <div className="contact-sub-con">
                     <h6>Phone:</h6>
-                    <a href="tel:+01234567899" className="d-inline-block">+012 (345) 678 99</a>
-                    <div className="clearfix" />
-                    <a href="tel:+1234567847858" className="d-inline-block">+12345678 478 58</a>
+                    <a href={`tel:${contactPhone.replace(/\s/g, '')}`} className="d-inline-block">{contactPhone}</a>
                   </div>
                 </div>
               </div>
@@ -102,7 +113,7 @@ function Contact() {
                   <figure><img src="/assets/images/contact-open-hours.png" alt="hours" className="img-fluid" /></figure>
                   <div className="contact-sub-con">
                     <h6>Open Hours:</h6>
-                    <p className="mb-0">Monday–Friday, 9 am–6 pm <br />Saturday-Sunday: 12 pm - 5pm</p>
+                    <p className="mb-0">{businessHours}</p>
                   </div>
                 </div>
               </div>
@@ -188,7 +199,7 @@ function Contact() {
       <div className="padding-rl float-left w-100">
         <div className="float-left w-100 contact-map-con position-relative br-50">
           <div className="container-fluid p-0 wow fadeInUp" data-wow-duration="2s" data-wow-delay="0.05s">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.367176743588!2d144.95736461590413!3d-37.81813957974638!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad65cbce858f6d7%3A0x9cc486b305ba3fb1!2s21%20King%20St%2C%20Melbourne%20VIC%203000%2C%20Australia!5e0!3m2!1sen!2s!4v1669200882885!5m2!1sen!2s" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Google Maps">
+            <iframe src={mapUrl} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Google Maps">
             </iframe>
           </div>
         </div>

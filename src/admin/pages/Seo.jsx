@@ -17,6 +17,13 @@ function AdminSeo() {
     ogTitle: '',
     ogDescription: '',
     footerText: '',
+    whatsappNumber: '',
+    supportEmail: '',
+    contactPhone: '',
+    address: '',
+    businessHours: '',
+    mapEmbedUrl: '',
+    socialLinks: { facebook: '', instagram: '', linkedin: '' },
   })
 
   useEffect(() => {
@@ -31,6 +38,17 @@ function AdminSeo() {
             ogTitle: data.seo.ogTitle || '',
             ogDescription: data.seo.ogDescription || '',
             footerText: data.seo.footerText || '',
+            whatsappNumber: data.seo.whatsappNumber || '',
+            supportEmail: data.seo.supportEmail || '',
+            contactPhone: data.seo.contactPhone || '',
+            address: data.seo.address || '',
+            businessHours: data.seo.businessHours || '',
+            mapEmbedUrl: data.seo.mapEmbedUrl || '',
+            socialLinks: {
+              facebook: data.seo.socialLinks?.facebook || '',
+              instagram: data.seo.socialLinks?.instagram || '',
+              linkedin: data.seo.socialLinks?.linkedin || '',
+            },
           })
           if (data.seo.siteIcon) setIconPreview(`${import.meta.env.VITE_API_URL}${data.seo.siteIcon}`)
           if (data.seo.ogImage) setOgPreview(`${import.meta.env.VITE_API_URL}${data.seo.ogImage}`)
@@ -45,6 +63,10 @@ function AdminSeo() {
 
   const handleChange = (e) => {
     setForm(p => ({ ...p, [e.target.name]: e.target.value }))
+  }
+
+  const handleSocialChange = (e) => {
+    setForm(p => ({ ...p, socialLinks: { ...p.socialLinks, [e.target.name]: e.target.value } }))
   }
 
   const handleSubmit = async (e) => {
@@ -167,6 +189,64 @@ function AdminSeo() {
           <div className="admin-form-group" style={{ marginBottom: 16 }}>
             <label>OG Description <span style={{ color: 'var(--text-light)', fontSize: 12 }}>(leave empty to use Site Description)</span></label>
             <textarea name="ogDescription" value={form.ogDescription} onChange={handleChange} rows={2} placeholder="Same as site description if left empty" maxLength={320} />
+          </div>
+        </div>
+
+        <div className="admin-form-card" style={{ marginBottom: 24 }}>
+          <div className="admin-section-title">
+            <i className="fa-solid fa-address-card" /> Contact Information
+          </div>
+
+          <div className="admin-form-group" style={{ marginBottom: 16 }}>
+            <label>WhatsApp Number <span style={{ color: 'var(--text-light)', fontSize: 12 }}>(without + sign)</span></label>
+            <input name="whatsappNumber" value={form.whatsappNumber} onChange={handleChange} placeholder="61383766284" />
+          </div>
+
+          <div className="admin-form-group" style={{ marginBottom: 16 }}>
+            <label>Support Email</label>
+            <input name="supportEmail" value={form.supportEmail} onChange={handleChange} placeholder="support@pharmez.com" />
+          </div>
+
+          <div className="admin-form-group" style={{ marginBottom: 16 }}>
+            <label>Contact Phone</label>
+            <input name="contactPhone" value={form.contactPhone} onChange={handleChange} placeholder="+61 3 8376 6284" />
+          </div>
+
+          <div className="admin-form-group" style={{ marginBottom: 16 }}>
+            <label>Address</label>
+            <textarea name="address" value={form.address} onChange={handleChange} rows={2} placeholder="21 King Street, Melbourne, 3000, Australia" />
+          </div>
+
+          <div className="admin-form-group" style={{ marginBottom: 16 }}>
+            <label>Business Hours</label>
+            <input name="businessHours" value={form.businessHours} onChange={handleChange} placeholder="Mon - Sat: 9:00 am to 6:00 pm" />
+          </div>
+
+          <div className="admin-form-group" style={{ marginBottom: 16 }}>
+            <label>Google Maps Embed URL</label>
+            <input name="mapEmbedUrl" value={form.mapEmbedUrl} onChange={handleChange} placeholder="https://www.google.com/maps/embed?pb=..." />
+            <span style={{ fontSize: 11, color: 'var(--text-light)' }}>Leave empty for default map location</span>
+          </div>
+        </div>
+
+        <div className="admin-form-card" style={{ marginBottom: 24 }}>
+          <div className="admin-section-title">
+            <i className="fa-solid fa-link" /> Social Media Links
+          </div>
+
+          <div className="admin-form-group" style={{ marginBottom: 16 }}>
+            <label>Facebook URL</label>
+            <input name="facebook" value={form.socialLinks.facebook} onChange={handleSocialChange} placeholder="https://www.facebook.com/" />
+          </div>
+
+          <div className="admin-form-group" style={{ marginBottom: 16 }}>
+            <label>Instagram URL</label>
+            <input name="instagram" value={form.socialLinks.instagram} onChange={handleSocialChange} placeholder="https://instagram.com/" />
+          </div>
+
+          <div className="admin-form-group" style={{ marginBottom: 16 }}>
+            <label>LinkedIn URL</label>
+            <input name="linkedin" value={form.socialLinks.linkedin} onChange={handleSocialChange} placeholder="https://www.linkedin.com/" />
           </div>
         </div>
 

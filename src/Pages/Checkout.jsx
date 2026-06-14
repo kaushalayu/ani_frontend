@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../Context/CartContext'
 import { useAuth } from '../Context/AuthContext'
@@ -24,6 +24,7 @@ function Checkout() {
   const [selectedSubPay, setSelectedSubPay] = useState('')
   const [placing, setPlacing] = useState(false)
   const [formErrors, setFormErrors] = useState({})
+  const [seoSettings, setSeoSettings] = useState(null)
 
   const fnameRef = useRef(null)
   const lnameRef = useRef(null)
@@ -31,6 +32,14 @@ function Checkout() {
   const stateRef = useRef(null)
   const cityRef = useRef(null)
   const zipRef = useRef(null)
+
+  useEffect(() => {
+    API.get('/seo')
+      .then(({ data }) => {
+        if (data.seo) setSeoSettings(data.seo)
+      })
+      .catch(() => {})
+  }, [])
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0)
   const shipping = cart.length > 0 ? 8.00 : 0
@@ -124,12 +133,14 @@ function Checkout() {
       clearCart()
 
       // 4. Send via WhatsApp or Email
+      const waNumber = seoSettings?.whatsappNumber || '61383766284'
+      const supportEmail = seoSettings?.supportEmail || 'support@pharmez.com'
       if (selectedPay === 'whatsapp') {
-        window.open('https://wa.me/61383766284?text=' + encodeURIComponent(message), '_blank')
+        window.open('https://wa.me/' + waNumber + '?text=' + encodeURIComponent(message), '_blank')
       } else {
         const subject = encodeURIComponent(`New Order from ${customerName}`)
         const body = encodeURIComponent(message)
-        window.location.href = `mailto:support@pharmez.com?subject=${subject}&body=${body}`
+        window.location.href = `mailto:${supportEmail}?subject=${subject}&body=${body}`
       }
 
       // 5. Redirect to thank you page — pass order summary
