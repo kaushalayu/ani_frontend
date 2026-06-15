@@ -1315,6 +1315,10 @@
 
 }
 
+@media (min-width: 992px) {
+    .mobile-login-item { display: none; }
+}
+
 @media screen and (max-width: 991px) {
     h1 {
         font-size: 42px;
@@ -1471,6 +1475,29 @@
         background-color: transparent;
         text-align: left;
         width: 100%;
+    }
+
+    /* ── Mobile Login Link ── */
+    .mobile-login-item .mobile-login-link,
+    .mobile-login-item .mobile-profile-link {
+        font-size: 16px !important;
+        font-weight: 700 !important;
+        padding: 10px 16px !important;
+        margin-top: 6px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #0f766e, #14b8a6);
+        color: #fff !important;
+        text-align: center;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: opacity 0.2s;
+    }
+    .mobile-login-item .mobile-login-link:hover,
+    .mobile-login-item .mobile-profile-link:hover {
+        opacity: 0.9;
+        color: #fff !important;
     }
 
     /* .header-con .header-contact ul li:first-child {

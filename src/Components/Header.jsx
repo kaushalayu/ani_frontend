@@ -262,6 +262,21 @@ function Header() {
                 <li className="nav-item">
                   <NavLink className={({ isActive }) => isActive ? 'nav-link p-0 active' : 'nav-link p-0'} to="/blog" onClick={closeMobileNav}>Blog</NavLink>
                 </li>
+
+                {/* ─── Mobile Login / Profile ─── */}
+                <li className="nav-item mobile-login-item">
+                  {isLoggedIn ? (
+                    <Link className="nav-link p-0 mobile-profile-link" to="/profile" onClick={closeMobileNav}>
+                      <i className="fa-solid fa-user" />
+                      {" "}{user?.name || 'Profile'}
+                    </Link>
+                  ) : (
+                    <Link className="nav-link p-0 mobile-login-link" to="/login" onClick={closeMobileNav}>
+                      <i className="fa-solid fa-right-to-bracket" />
+                      {" "}Login
+                    </Link>
+                  )}
+                </li>
               </ul>
             </div>
 
