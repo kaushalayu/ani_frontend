@@ -76,53 +76,55 @@ function AdminOrders() {
           </div>
         ) : (
           <>
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Order ID</th>
-                  <th>Customer</th>
-                  <th>Items</th>
-                  <th>Total</th>
-                  <th>Payment</th>
-                  <th>Status</th>
-                  <th>Date</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((order) => (
-                  <tr key={order._id}>
-                    <td style={{ fontFamily: 'monospace', fontSize: 12, color: 'var(--text-secondary)' }}>
-                      #{order._id.slice(-8).toUpperCase()}
-                    </td>
-                    <td>
-                      <div style={{ fontWeight: 600 }}>{order.user?.name || order.shippingAddress?.firstName || 'N/A'}</div>
-                      <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{order.user?.email || order.shippingAddress?.email}</div>
-                    </td>
-                    <td style={{ fontSize: 13 }}>{order.orderItems?.length} item(s)</td>
-                    <td style={{ fontWeight: 700 }}>${order.totalPrice?.toFixed(2)}</td>
-                    <td style={{ fontSize: 13, textTransform: 'capitalize' }}>
-                      <i className="fa-solid fa-credit-card" style={{ marginRight: 5, color: 'var(--text-light)' }} />
-                      {order.paymentMethod}
-                    </td>
-                    <td>
-                      <span className={`status-badge ${STATUS_COLORS[order.orderStatus] || ''}`}>
-                        {order.orderStatus}
-                      </span>
-                    </td>
-                    <td style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-                      <i className="fa-regular fa-calendar" style={{ marginRight: 5 }} />
-                      {new Date(order.createdAt).toLocaleDateString()}
-                    </td>
-                    <td>
-                      <Link to={`/admin/orders/${order._id}`} className="admin-btn admin-btn-outline admin-btn-xs">
-                        <i className="fa-solid fa-eye" /> View
-                      </Link>
-                    </td>
+            <div className="admin-table-wrap">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {orders.map((order) => (
+                    <tr key={order._id}>
+                      <td style={{ fontFamily: 'monospace', fontSize: 12, color: 'var(--text-secondary)' }}>
+                        #{order._id.slice(-8).toUpperCase()}
+                      </td>
+                      <td>
+                        <div style={{ fontWeight: 600 }}>{order.user?.name || order.shippingAddress?.firstName || 'N/A'}</div>
+                        <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{order.user?.email || order.shippingAddress?.email}</div>
+                      </td>
+                      <td style={{ fontSize: 13 }}>{order.orderItems?.length} item(s)</td>
+                      <td style={{ fontWeight: 700 }}>${order.totalPrice?.toFixed(2)}</td>
+                      <td style={{ fontSize: 13, textTransform: 'capitalize' }}>
+                        <i className="fa-solid fa-credit-card" style={{ marginRight: 5, color: 'var(--text-light)' }} />
+                        {order.paymentMethod}
+                      </td>
+                      <td>
+                        <span className={`status-badge ${STATUS_COLORS[order.orderStatus] || ''}`}>
+                          {order.orderStatus}
+                        </span>
+                      </td>
+                      <td style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+                        <i className="fa-regular fa-calendar" style={{ marginRight: 5 }} />
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </td>
+                      <td>
+                        <Link to={`/admin/orders/${order._id}`} className="admin-btn admin-btn-outline admin-btn-xs">
+                          <i className="fa-solid fa-eye" /> View
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
             {totalPages > 1 && (
               <div className="admin-pagination">

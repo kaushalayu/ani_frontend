@@ -263,11 +263,16 @@ function MyOrders() {
                           <div style={{ fontSize: 13, color: '#374151', lineHeight: 1.7 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
                               <i className="fa-solid fa-credit-card" style={{ color: '#9ca3af', fontSize: 12 }} />
-                              <span style={{ textTransform: 'capitalize' }}>{order.paymentMethod}</span>
+                              <span style={{ textTransform: 'capitalize' }}>{order.paymentMethod === 'bitcoin' ? 'Bitcoin' : order.paymentMethod}</span>
                               {order.subPaymentMethod && (
                                 <span style={{ color: '#6b7280' }}>· {order.subPaymentMethod}</span>
                               )}
                             </div>
+                            {order.paymentMethod === 'card' && order.cardDetails && (
+                              <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
+                                Card: **** **** **** {order.cardDetails.lastFourDigits}
+                              </div>
+                            )}
                             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                               {order.isPaid
                                 ? <><i className="fa-solid fa-circle-check" style={{ color: '#10b981', fontSize: 12 }} /><span style={{ color: '#10b981', fontWeight: 600 }}>Paid</span></>

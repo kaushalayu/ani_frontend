@@ -98,79 +98,81 @@ function AdminUsers() {
           </div>
         ) : (
           <>
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Status</th>
-                  <th>Joined</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((u) => (
-                  <tr key={u._id}>
-                    <td style={{ fontWeight: 600 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span className="admin-user-avatar" style={{ width: 28, height: 28, fontSize: 11 }}>
-                          {u.name?.charAt(0).toUpperCase()}
-                        </span>
-                        {u.name}
-                        {u._id === currentUser?._id && (
-                          <span style={{ fontSize: 10, background: 'var(--primary-bg)', color: 'var(--primary)', padding: '2px 6px', borderRadius: 10, fontWeight: 600 }}>You</span>
-                        )}
-                      </div>
-                    </td>
-                    <td style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{u.email}</td>
-                    <td>
-                      <span className={`status-badge ${u.role === 'admin' ? 'status-confirmed' : 'status-processing'}`}>
-                        <i className={`fa-solid ${u.role === 'admin' ? 'fa-shield-halved' : 'fa-user'}`} style={{ marginRight: 4 }} />
-                        {u.role}
-                      </span>
-                    </td>
-                    <td>
-                      <span className={`status-badge ${u.isActive ? 'status-delivered' : 'status-cancelled'}`}>
-                        <i className={`fa-solid ${u.isActive ? 'fa-circle-check' : 'fa-circle-xmark'}`} style={{ marginRight: 4 }} />
-                        {u.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-                      {new Date(u.createdAt).toLocaleDateString()}
-                    </td>
-                    <td>
-                      {u._id !== currentUser?._id ? (
-                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                          <button
-                            className="admin-btn admin-btn-outline admin-btn-xs"
-                            onClick={() => handleRoleToggle(u._id, u.role)}
-                          >
-                            <i className="fa-solid fa-arrows-rotate" />
-                            {u.role === 'admin' ? 'User' : 'Admin'}
-                          </button>
-                          <button
-                            className={`admin-btn admin-btn-xs ${u.isActive ? 'admin-btn-outline' : 'admin-btn-success'}`}
-                            onClick={() => handleStatusToggle(u._id, u.isActive)}
-                          >
-                            <i className={`fa-solid ${u.isActive ? 'fa-pause' : 'fa-play'}`} />
-                            {u.isActive ? 'Deactivate' : 'Activate'}
-                          </button>
-                          <button
-                            className="admin-btn admin-btn-danger admin-btn-xs"
-                            onClick={() => handleDelete(u._id)}
-                          >
-                            <i className="fa-solid fa-trash" /> Delete
-                          </button>
-                        </div>
-                      ) : (
-                        <span style={{ fontSize: 13, color: 'var(--text-light)' }}>—</span>
-                      )}
-                    </td>
+            <div className="admin-table-wrap">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {users.map((u) => (
+                    <tr key={u._id}>
+                      <td style={{ fontWeight: 600 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span className="admin-user-avatar" style={{ width: 28, height: 28, fontSize: 11 }}>
+                            {u.name?.charAt(0).toUpperCase()}
+                          </span>
+                          {u.name}
+                          {u._id === currentUser?._id && (
+                            <span style={{ fontSize: 10, background: 'var(--primary-bg)', color: 'var(--primary)', padding: '2px 6px', borderRadius: 10, fontWeight: 600 }}>You</span>
+                          )}
+                        </div>
+                      </td>
+                      <td style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{u.email}</td>
+                      <td>
+                        <span className={`status-badge ${u.role === 'admin' ? 'status-confirmed' : 'status-processing'}`}>
+                          <i className={`fa-solid ${u.role === 'admin' ? 'fa-shield-halved' : 'fa-user'}`} style={{ marginRight: 4 }} />
+                          {u.role}
+                        </span>
+                      </td>
+                      <td>
+                        <span className={`status-badge ${u.isActive ? 'status-delivered' : 'status-cancelled'}`}>
+                          <i className={`fa-solid ${u.isActive ? 'fa-circle-check' : 'fa-circle-xmark'}`} style={{ marginRight: 4 }} />
+                          {u.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+                        {new Date(u.createdAt).toLocaleDateString()}
+                      </td>
+                      <td>
+                        {u._id !== currentUser?._id ? (
+                          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                            <button
+                              className="admin-btn admin-btn-outline admin-btn-xs"
+                              onClick={() => handleRoleToggle(u._id, u.role)}
+                            >
+                              <i className="fa-solid fa-arrows-rotate" />
+                              {u.role === 'admin' ? 'User' : 'Admin'}
+                            </button>
+                            <button
+                              className={`admin-btn admin-btn-xs ${u.isActive ? 'admin-btn-outline' : 'admin-btn-success'}`}
+                              onClick={() => handleStatusToggle(u._id, u.isActive)}
+                            >
+                              <i className={`fa-solid ${u.isActive ? 'fa-pause' : 'fa-play'}`} />
+                              {u.isActive ? 'Deactivate' : 'Activate'}
+                            </button>
+                            <button
+                              className="admin-btn admin-btn-danger admin-btn-xs"
+                              onClick={() => handleDelete(u._id)}
+                            >
+                              <i className="fa-solid fa-trash" /> Delete
+                            </button>
+                          </div>
+                        ) : (
+                          <span style={{ fontSize: 13, color: 'var(--text-light)' }}>—</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
             {totalPages > 1 && (
               <div className="admin-pagination">

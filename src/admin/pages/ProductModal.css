@@ -615,20 +615,47 @@
   .pm-grid-3 { grid-template-columns: 1fr; }
 
   .pm-pills-header,
-  .pm-pills-row { grid-template-columns: 1fr 1fr 36px; }
+  .pm-pills-row {
+    grid-template-columns: 1fr 1fr 1fr 1fr 36px;
+    gap: 6px;
+    padding: 8px 10px;
+    overflow-x: auto;
+    min-width: 400px;
+  }
 
-  .pm-pills-header span:nth-child(3),
-  .pm-pills-row .pm-input-prefix:nth-child(3) { display: none; }
+  .pm-pills-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 
   .pm-body { padding: 20px 16px; }
   .pm-header { padding: 16px 20px; }
-  .pm-footer { padding: 14px 16px; flex-wrap: wrap; }
+  .pm-header p { display: none; }
+  .pm-footer { padding: 14px 16px; flex-wrap: wrap; gap: 12px; }
   .pm-footer-actions { width: 100%; justify-content: flex-end; }
+  .pm-footer-tabs { display: none; }
   .pm-tab span { display: none; }
   .pm-tab { padding: 12px 16px; }
+  .pm-flags-grid { grid-template-columns: 1fr; }
+  .pm-switch-label { flex-wrap: wrap; }
 }
 
 @media (max-width: 480px) {
   .pm-image-upload { flex-direction: column; align-items: flex-start; }
   .pm-footer-actions .admin-btn { font-size: 12px; padding: 8px 14px; }
+  .pm-footer-actions { flex-wrap: wrap; gap: 8px; }
+  .pm-footer-actions .admin-btn { flex: 1; justify-content: center; min-width: 0; }
+  .pm-header-icon { width: 36px; height: 36px; font-size: 15px; }
+  .pm-header h2 { font-size: 15px; }
+  .pm-body { padding: 16px 12px; }
+  .pm-pills-header { font-size: 10px; }
+  .pm-pills-row input { font-size: 12px; padding: 7px 10px; }
+  .pm-pills-toggle { padding: 12px; }
+  .pm-pills-add { font-size: 12px; padding: 10px 14px; }
+  .pm-flag-card { padding: 12px; }
+  .pm-flag-card-inner { flex-wrap: wrap; gap: 10px; }
+  .pm-flag-text { width: 100%; }
+  .pm-flag-text strong { font-size: 13px; }
+  .pm-flag-text span { font-size: 11px; }
+  .pm-badge-info { flex-direction: column; gap: 8px; padding: 12px; }
 }

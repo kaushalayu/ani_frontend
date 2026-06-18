@@ -257,6 +257,9 @@ function Header() {
                 <ProductMegaMenu />
 
                 <li className="nav-item">
+                  <NavLink className={({ isActive }) => isActive ? 'nav-link p-0 active' : 'nav-link p-0'} to="/all-medicines" onClick={closeMobileNav}>All Medicines</NavLink>
+                </li>
+                <li className="nav-item">
                   <NavLink className={({ isActive }) => isActive ? 'nav-link p-0 active' : 'nav-link p-0'} to="/faq" onClick={closeMobileNav}>FAQ</NavLink>
                 </li>
                 <li className="nav-item">

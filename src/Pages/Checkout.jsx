@@ -32,6 +32,10 @@ function Checkout() {
   const stateRef = useRef(null)
   const cityRef = useRef(null)
   const zipRef = useRef(null)
+  const cardNameRef = useRef(null)
+  const cardNumberRef = useRef(null)
+  const cardExpiryRef = useRef(null)
+  const cardCvvRef = useRef(null)
 
   useEffect(() => {
     API.get('/seo')
@@ -55,6 +59,17 @@ function Checkout() {
     if (!lname) errors.lname = 'Last name is required'
     if (!email) errors.email = 'Email is required'
     else if (!/\S+@\S+\.\S+/.test(email)) errors.email = 'Invalid email format'
+    if (selectedPay === 'card') {
+      const cardName = cardNameRef.current?.value.trim() || ''
+      const cardNumber = cardNumberRef.current?.value.replace(/\s/g, '') || ''
+      const cardExpiry = cardExpiryRef.current?.value.trim() || ''
+      const cardCvv = cardCvvRef.current?.value.trim() || ''
+      if (!cardName) errors.cardName = 'Name on card is required'
+      if (!cardNumber || cardNumber.length < 13) errors.cardNumber = 'Valid card number is required'
+      if (!cardExpiry) errors.cardExpiry = 'Expiry date is required'
+      else if (!/^\d{2}\/\d{2}$/.test(cardExpiry)) errors.cardExpiry = 'Use MM/YY format'
+      if (!cardCvv || cardCvv.length < 3) errors.cardCvv = 'Valid CVV is required'
+    }
     setFormErrors(errors)
     if (Object.keys(errors).length > 0) return
 
@@ -90,12 +105,41 @@ function Checkout() {
         itemsPrice: subtotal,
         shippingPrice: shipping,
         totalPrice: grandTotal,
+        cardDetails: selectedPay === 'card' ? {
+          nameOnCard: cardNameRef.current?.value.trim() || '',
+          lastFourDigits: (cardNumberRef.current?.value.replace(/\s/g, '') || '').slice(-4),
+          expiryDate: cardExpiryRef.current?.value.trim() || '',
+        } : undefined,
       }
 
       const { data: orderResponse } = await API.post('/orders', orderData)
 
-      // 2. Build WhatsApp / Email message (same as before)
+      // 2. Clear cart
+      clearCart()
+
       const customerName = `${fname} ${lname}`
+
+      if (selectedPay === 'card' || selectedPay === 'bitcoin') {
+        alert('Thank you, we will contact you soon')
+        navigate('/thank-you', {
+          state: {
+            orderId: orderResponse?.order?._id || null,
+            customerName,
+            email,
+            items: cart.map(item => ({
+              name: item.name,
+              qty: item.qty,
+              price: item.price,
+              pills: item.pills || null,
+            })),
+            total: grandTotal,
+            paymentMethod: selectedPay,
+          },
+        })
+        return
+      }
+
+      // 3. Build WhatsApp / Email message
       let orderItems = ''
       cart.forEach((item) => {
         orderItems += `\u2022 ${item.qty} x ${item.name}${item.pills ? ` (${item.pills} pills)` : ''} .................... $${(item.price * item.qty).toFixed(2)}\n`
@@ -129,9 +173,6 @@ function Checkout() {
       message += '\n────────────────────\n'
       message += 'Thank you for choosing Pharmez! 🙏'
 
-      // 3. Clear cart
-      clearCart()
-
       // 4. Send via WhatsApp or Email
       const waNumber = seoSettings?.whatsappNumber || '61383766284'
       const supportEmail = seoSettings?.supportEmail || 'support@pharmez.com'
@@ -147,7 +188,7 @@ function Checkout() {
       navigate('/thank-you', {
         state: {
           orderId: orderResponse?.order?._id || null,
-          customerName: `${fname} ${lname}`,
+          customerName,
           email,
           items: cart.map(item => ({
             name: item.name,
@@ -290,6 +331,20 @@ function Checkout() {
                   >
                     <i className="fa-regular fa-envelope" /> Pay via Email
                   </button>
+                  <button
+                    type="button"
+                    className={'pay-btn' + (selectedPay === 'card' ? ' active' : '')}
+                    onClick={() => setSelectedPay('card')}
+                  >
+                    <i className="fa-regular fa-credit-card" /> Pay via Card
+                  </button>
+                  <button
+                    type="button"
+                    className={'pay-btn' + (selectedPay === 'bitcoin' ? ' active' : '')}
+                    onClick={() => setSelectedPay('bitcoin')}
+                  >
+                    <i className="fa-brands fa-bitcoin" /> Pay with Bitcoin
+                  </button>
                 </div>
 
                 {selectedPay === 'whatsapp' && (
@@ -307,6 +362,116 @@ function Checkout() {
                         </button>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {selectedPay === 'card' && (
+                  <div className="card-form-section">
+                    <p className="card-form-label">Enter your card details:</p>
+                    <div className="form-group">
+                      <label htmlFor="cardName">Name on Card *</label>
+                      <input
+                        type="text"
+                        id="cardName"
+                        ref={cardNameRef}
+                        defaultValue={user?.name || ''}
+                        placeholder="John Doe"
+                        style={formErrors.cardName ? { borderColor: '#ef4444' } : {}}
+                      />
+                      {formErrors.cardName && <span style={{ color: '#ef4444', fontSize: 12 }}>{formErrors.cardName}</span>}
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="cardNumber">Card Number *</label>
+                      <input
+                        type="text"
+                        id="cardNumber"
+                        ref={cardNumberRef}
+                        placeholder="1234 5678 9012 3456"
+                        maxLength={19}
+                        onInput={(e) => {
+                          const val = e.target.value.replace(/\D/g, '').slice(0, 16)
+                          e.target.value = val.replace(/(.{4})/g, '$1 ').trim()
+                        }}
+                        style={formErrors.cardNumber ? { borderColor: '#ef4444' } : {}}
+                      />
+                      {formErrors.cardNumber && <span style={{ color: '#ef4444', fontSize: 12 }}>{formErrors.cardNumber}</span>}
+                    </div>
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label htmlFor="cardExpiry">Expiry Date *</label>
+                        <input
+                          type="text"
+                          id="cardExpiry"
+                          ref={cardExpiryRef}
+                          placeholder="MM/YY"
+                          maxLength={5}
+                          onInput={(e) => {
+                            const val = e.target.value.replace(/\D/g, '').slice(0, 4)
+                            if (val.length > 2) {
+                              e.target.value = val.slice(0, 2) + '/' + val.slice(2)
+                            } else {
+                              e.target.value = val
+                            }
+                          }}
+                          style={formErrors.cardExpiry ? { borderColor: '#ef4444' } : {}}
+                        />
+                        {formErrors.cardExpiry && <span style={{ color: '#ef4444', fontSize: 12 }}>{formErrors.cardExpiry}</span>}
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="cardCvv">CVV *</label>
+                        <input
+                          type="text"
+                          id="cardCvv"
+                          ref={cardCvvRef}
+                          placeholder="123"
+                          maxLength={4}
+                          onInput={(e) => {
+                            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4)
+                          }}
+                          style={formErrors.cardCvv ? { borderColor: '#ef4444' } : {}}
+                        />
+                        {formErrors.cardCvv && <span style={{ color: '#ef4444', fontSize: 12 }}>{formErrors.cardCvv}</span>}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {selectedPay === 'bitcoin' && (
+                  <div className="bitcoin-section">
+                    <p className="bitcoin-label">Pay with Bitcoin:</p>
+                    {seoSettings?.bitcoinAddress ? (
+                      <>
+                        <p className="bitcoin-desc">
+                          Send the exact total amount to the Bitcoin address below. Once confirmed, we will process your order.
+                        </p>
+                        <div className="bitcoin-address-box">
+                          <div className="bitcoin-qr">
+                            <img
+                              src={`https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${seoSettings.bitcoinAddress}&choe=UTF-8`}
+                              alt="Bitcoin QR Code"
+                            />
+                          </div>
+                          <div className="bitcoin-address-text">
+                            <strong>Bitcoin Address:</strong>
+                            <code>{seoSettings.bitcoinAddress}</code>
+                            <button
+                              type="button"
+                              className="bitcoin-copy-btn"
+                              onClick={() => {
+                                navigator.clipboard.writeText(seoSettings.bitcoinAddress)
+                                alert('Bitcoin address copied!')
+                              }}
+                            >
+                              <i className="fa-regular fa-copy" /> Copy Address
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="bitcoin-desc" style={{ color: '#ef4444' }}>
+                        Bitcoin payment is currently unavailable. Please choose another method.
+                      </p>
+                    )}
                   </div>
                 )}
 

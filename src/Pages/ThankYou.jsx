@@ -16,10 +16,17 @@ function ThankYou() {
                 <img src="/assets/images/smile-image.png" alt="smile icon" className="img-fluid" />
               </figure>
               <h1 className="text-black">Thank You!</h1>
-              <p>
-                Thank you for your order! We're committed to your health and well-being, and we can't wait for<br />
-                you to experience our trusted pharmacy care. Your satisfaction is our top priority.
-              </p>
+              {order?.paymentMethod === 'card' || order?.paymentMethod === 'bitcoin' ? (
+                <p>
+                  Thank you for your order! We will contact you soon to confirm and process your payment.<br />
+                  Your order is currently pending approval.
+                </p>
+              ) : (
+                <p>
+                  Thank you for your order! We're committed to your health and well-being, and we can't wait for<br />
+                  you to experience our trusted pharmacy care. Your satisfaction is our top priority.
+                </p>
+              )}
 
               {/* ── Order Summary Card ── */}
               {order && (
@@ -51,7 +58,7 @@ function ThankYou() {
                     </p>
                     {order.paymentMethod && (
                       <p style={{ fontSize: 13, color: '#6b7280', margin: '4px 0 0' }}>
-                        <strong>Payment:</strong> via {order.paymentMethod === 'whatsapp' ? 'WhatsApp' : 'Email'}
+                        <strong>Payment:</strong> via {order.paymentMethod === 'whatsapp' ? 'WhatsApp' : order.paymentMethod === 'card' ? 'Card' : order.paymentMethod === 'bitcoin' ? 'Bitcoin' : 'Email'}
                       </p>
                     )}
                   </div>

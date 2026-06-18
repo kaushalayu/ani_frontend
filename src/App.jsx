@@ -31,6 +31,7 @@ import MyOrders from './Pages/MyOrders'
 import Profile from './Pages/Profile'
 import LoadMore from './Pages/LoadMore'
 import ThreeColumnSidebar from './Pages/ThreeColumnSidebar'
+import AllMedicines from './Pages/AllMedicines'
 
 // Admin Panel
 import AdminLayout from './admin/AdminLayout'
@@ -73,6 +74,7 @@ function App() {
         <Route path="painkillers" element={<Painkillers />} />
         <Route path="sleeping-pills" element={<SleepingPills />} />
         <Route path="anxiety" element={<Anxiety />} />
+        <Route path="all-medicines" element={<AllMedicines />} />
         <Route path="coming-soon" element={<ComingSoon />} />
         <Route path="load-more" element={<LoadMore />} />
         <Route path="three-column-sidebar" element={<ThreeColumnSidebar />} />

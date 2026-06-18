@@ -196,47 +196,49 @@ function AdminTestimonials() {
             </button>
           </div>
         ) : (
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th style={{ width: 50 }}>Image</th>
-                <th>Name</th>
-                <th>Role</th>
-                <th>Rating</th>
-                <th>Text</th>
-                <th>Status</th>
-                <th style={{ width: 110 }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {list.map(t => (
-                <tr key={t._id}>
-                  <td><img src={imgSrc(t.image)} alt={t.name} style={{ width: 36, height: 36, objectFit: 'cover', borderRadius: '50%' }} /></td>
-                  <td style={{ fontWeight: 600 }}>{t.name}</td>
-                  <td style={{ color: 'var(--text-secondary)', fontSize: 12.5 }}>{t.role || '—'}</td>
-                  <td>{renderStars(t.rating)}</td>
-                  <td style={{ maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-secondary)' }}>
-                    {t.text}
-                  </td>
-                  <td>
-                    <span className={`status-badge ${t.isActive ? 'status-delivered' : 'status-cancelled'}`}>
-                      {t.isActive ? 'Active' : 'Hidden'}
-                    </span>
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', gap: 5 }}>
-                      <button className="admin-btn admin-btn-outline admin-btn-xs" onClick={() => openEdit(t._id)} title="Edit">
-                        <i className="fa-solid fa-pen" />
-                      </button>
-                      <button className="admin-btn admin-btn-danger admin-btn-xs" onClick={() => handleDelete(t._id)} disabled={deleting === t._id} title="Delete">
-                        <i className={`fa-solid ${deleting === t._id ? 'fa-spinner fa-spin' : 'fa-trash'}`} />
-                      </button>
-                    </div>
-                  </td>
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th style={{ width: 50 }}>Image</th>
+                  <th>Name</th>
+                  <th>Role</th>
+                  <th>Rating</th>
+                  <th>Text</th>
+                  <th>Status</th>
+                  <th style={{ width: 110 }}>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {list.map(t => (
+                  <tr key={t._id}>
+                    <td><img src={imgSrc(t.image)} alt={t.name} style={{ width: 36, height: 36, objectFit: 'cover', borderRadius: '50%' }} /></td>
+                    <td style={{ fontWeight: 600 }}>{t.name}</td>
+                    <td style={{ color: 'var(--text-secondary)', fontSize: 12.5 }}>{t.role || '—'}</td>
+                    <td>{renderStars(t.rating)}</td>
+                    <td style={{ maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-secondary)' }}>
+                      {t.text}
+                    </td>
+                    <td>
+                      <span className={`status-badge ${t.isActive ? 'status-delivered' : 'status-cancelled'}`}>
+                        {t.isActive ? 'Active' : 'Hidden'}
+                      </span>
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', gap: 5 }}>
+                        <button className="admin-btn admin-btn-outline admin-btn-xs" onClick={() => openEdit(t._id)} title="Edit">
+                          <i className="fa-solid fa-pen" />
+                        </button>
+                        <button className="admin-btn admin-btn-danger admin-btn-xs" onClick={() => handleDelete(t._id)} disabled={deleting === t._id} title="Delete">
+                          <i className={`fa-solid ${deleting === t._id ? 'fa-spinner fa-spin' : 'fa-trash'}`} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

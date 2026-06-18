@@ -142,7 +142,7 @@ function AdminCategories() {
           {editId ? 'Edit Category' : 'Add New Category'}
         </div>
         <form onSubmit={handleSubmit}>
-          <div className="admin-form-grid" style={{ gridTemplateColumns: '1fr 2fr' }}>
+          <div className="admin-form-grid">
             <div className="admin-form-group">
               <label>Category Name <span style={{ color: 'var(--danger)' }}>*</span></label>
               <input
@@ -195,68 +195,70 @@ function AdminCategories() {
             </p>
           </div>
         ) : (
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Slug</th>
-                <th>Description</th>
-                <th>Navbar Badge</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {categories.map((cat) => {
-                const hint = getBadgeHint(cat.name)
-                return (
-                  <tr key={cat._id}>
-                    <td style={{ fontWeight: 600, fontSize: 13.5 }}>{cat.name}</td>
-                    <td style={{ fontFamily: 'monospace', fontSize: 12, color: 'var(--text-secondary)' }}>
-                      {cat.slug}
-                    </td>
-                    <td style={{ fontSize: 13, color: 'var(--text-secondary)', maxWidth: 200 }}>
-                      <span style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                        {cat.description || '—'}
-                      </span>
-                    </td>
-                    <td>
-                      {hint ? (
-                        <span style={{
-                          display: 'inline-flex', alignItems: 'center', gap: 5,
-                          padding: '3px 10px', borderRadius: 20,
-                          background: hint.color + '18',
-                          border: `1px solid ${hint.color}44`,
-                          fontSize: 11.5, fontWeight: 700, color: hint.color,
-                          fontFamily: 'monospace',
-                        }}>
-                          {hint.icon} {hint.badge}
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Slug</th>
+                  <th>Description</th>
+                  <th>Navbar Badge</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {categories.map((cat) => {
+                  const hint = getBadgeHint(cat.name)
+                  return (
+                    <tr key={cat._id}>
+                      <td style={{ fontWeight: 600, fontSize: 13.5 }}>{cat.name}</td>
+                      <td style={{ fontFamily: 'monospace', fontSize: 12, color: 'var(--text-secondary)' }}>
+                        {cat.slug}
+                      </td>
+                      <td style={{ fontSize: 13, color: 'var(--text-secondary)', maxWidth: 200 }}>
+                        <span style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                          {cat.description || '—'}
                         </span>
-                      ) : (
-                        <span style={{ color: 'var(--text-light)', fontSize: 12 }}>—</span>
-                      )}
-                    </td>
-                    <td>
-                      <span className={`status-badge ${cat.isActive ? 'status-delivered' : 'status-cancelled'}`}>
-                        <i className={`fa-solid ${cat.isActive ? 'fa-eye' : 'fa-eye-slash'}`} />
-                        {cat.isActive ? 'Active' : 'Hidden'}
-                      </span>
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', gap: 6 }}>
-                        <button className="admin-btn admin-btn-outline admin-btn-xs" onClick={() => handleEdit(cat)}>
-                          <i className="fa-solid fa-pen" /> Edit
-                        </button>
-                        <button className="admin-btn admin-btn-danger admin-btn-xs" onClick={() => handleDelete(cat._id)}>
-                          <i className="fa-solid fa-trash" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+                      </td>
+                      <td>
+                        {hint ? (
+                          <span style={{
+                            display: 'inline-flex', alignItems: 'center', gap: 5,
+                            padding: '3px 10px', borderRadius: 20,
+                            background: hint.color + '18',
+                            border: `1px solid ${hint.color}44`,
+                            fontSize: 11.5, fontWeight: 700, color: hint.color,
+                            fontFamily: 'monospace',
+                          }}>
+                            {hint.icon} {hint.badge}
+                          </span>
+                        ) : (
+                          <span style={{ color: 'var(--text-light)', fontSize: 12 }}>—</span>
+                        )}
+                      </td>
+                      <td>
+                        <span className={`status-badge ${cat.isActive ? 'status-delivered' : 'status-cancelled'}`}>
+                          <i className={`fa-solid ${cat.isActive ? 'fa-eye' : 'fa-eye-slash'}`} />
+                          {cat.isActive ? 'Active' : 'Hidden'}
+                        </span>
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <button className="admin-btn admin-btn-outline admin-btn-xs" onClick={() => handleEdit(cat)}>
+                            <i className="fa-solid fa-pen" /> Edit
+                          </button>
+                          <button className="admin-btn admin-btn-danger admin-btn-xs" onClick={() => handleDelete(cat._id)}>
+                            <i className="fa-solid fa-trash" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

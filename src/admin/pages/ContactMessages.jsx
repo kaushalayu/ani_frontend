@@ -152,7 +152,7 @@ function ContactMessages() {
   )
 
   const FilterTabs = () => (
-    <div style={{
+    <div className="contact-filter-tabs" style={{
       display: 'flex', gap: 6, padding: '0 20px', paddingBottom: 16,
       borderBottom: '1px solid var(--border)', overflowX: 'auto', flexWrap: 'nowrap',
     }}>
@@ -210,7 +210,7 @@ function ContactMessages() {
   const MessageItem = ({ contact }) => {
     const isSelected = selected?._id === contact._id
     return (
-      <div
+      <div className="contact-message-item"
         onClick={() => handleSelect(contact)}
         style={{
           display: 'flex', alignItems: 'flex-start', gap: 12,
@@ -274,7 +274,7 @@ function ContactMessages() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: 4, flexShrink: 0, alignItems: 'center', marginTop: 2 }}>
+        <div className="msg-actions" style={{ display: 'flex', gap: 4, flexShrink: 0, alignItems: 'center', marginTop: 2 }}>
           {!contact.isRead && (
             <span style={{
               width: 8, height: 8, borderRadius: '50%',
@@ -345,7 +345,7 @@ function ContactMessages() {
         </div>
 
         <div style={{ padding: '24px' }}>
-          <div style={{
+          <div className="detail-grid" style={{
             display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20,
           }}>
             <div>
@@ -516,10 +516,7 @@ function ContactMessages() {
 
       <Stats />
 
-      <div style={{
-        display: 'grid', gridTemplateColumns: selected ? '1fr 420px' : '1fr',
-        gap: 22, alignItems: 'start',
-      }} className="contact-messages-grid">
+      <div className={`contact-messages-grid${selected ? ' has-selected' : ''}`} style={{ gap: 22, alignItems: 'start' }}>
         <div className="admin-table-card" style={{ marginBottom: 0 }}>
           <FilterTabs />
           <SearchBar />

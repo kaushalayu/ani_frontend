@@ -23,6 +23,7 @@ function AdminSeo() {
     address: '',
     businessHours: '',
     mapEmbedUrl: '',
+    bitcoinAddress: '',
     socialLinks: { facebook: '', instagram: '', linkedin: '' },
   })
 
@@ -44,6 +45,7 @@ function AdminSeo() {
             address: data.seo.address || '',
             businessHours: data.seo.businessHours || '',
             mapEmbedUrl: data.seo.mapEmbedUrl || '',
+            bitcoinAddress: data.seo.bitcoinAddress || '',
             socialLinks: {
               facebook: data.seo.socialLinks?.facebook || '',
               instagram: data.seo.socialLinks?.instagram || '',
@@ -226,6 +228,12 @@ function AdminSeo() {
             <label>Google Maps Embed URL</label>
             <input name="mapEmbedUrl" value={form.mapEmbedUrl} onChange={handleChange} placeholder="https://www.google.com/maps/embed?pb=..." />
             <span style={{ fontSize: 11, color: 'var(--text-light)' }}>Leave empty for default map location</span>
+          </div>
+
+          <div className="admin-form-group" style={{ marginBottom: 16 }}>
+            <label>Bitcoin Wallet Address</label>
+            <input name="bitcoinAddress" value={form.bitcoinAddress} onChange={handleChange} placeholder="bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" />
+            <span style={{ fontSize: 11, color: 'var(--text-light)' }}>Used for "Pay with Bitcoin" payment method</span>
           </div>
         </div>
 

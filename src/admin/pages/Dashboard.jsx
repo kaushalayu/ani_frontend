@@ -98,45 +98,47 @@ function Dashboard() {
             No orders yet.
           </div>
         ) : (
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentOrders.map((order) => (
-                <tr key={order._id}>
-                  <td style={{ fontFamily: 'monospace', fontSize: 12, color: 'var(--text-secondary)' }}>
-                    #{order._id.slice(-8).toUpperCase()}
-                  </td>
-                  <td>
-                    <div style={{ fontWeight: 600 }}>{order.user?.name || 'N/A'}</div>
-                    <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{order.user?.email}</div>
-                  </td>
-                  <td style={{ fontWeight: 700 }}>${order.totalPrice?.toFixed(2)}</td>
-                  <td>
-                    <span className={`status-badge ${STATUS_COLORS[order.orderStatus] || ''}`}>
-                      {order.orderStatus}
-                    </span>
-                  </td>
-                  <td style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-                    {new Date(order.createdAt).toLocaleDateString()}
-                  </td>
-                  <td>
-                    <Link to={`/admin/orders/${order._id}`} className="admin-btn admin-btn-outline admin-btn-xs">
-                      View <i className="fa-solid fa-eye" />
-                    </Link>
-                  </td>
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {recentOrders.map((order) => (
+                  <tr key={order._id}>
+                    <td style={{ fontFamily: 'monospace', fontSize: 12, color: 'var(--text-secondary)' }}>
+                      #{order._id.slice(-8).toUpperCase()}
+                    </td>
+                    <td>
+                      <div style={{ fontWeight: 600 }}>{order.user?.name || 'N/A'}</div>
+                      <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{order.user?.email}</div>
+                    </td>
+                    <td style={{ fontWeight: 700 }}>${order.totalPrice?.toFixed(2)}</td>
+                    <td>
+                      <span className={`status-badge ${STATUS_COLORS[order.orderStatus] || ''}`}>
+                        {order.orderStatus}
+                      </span>
+                    </td>
+                    <td style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </td>
+                    <td>
+                      <Link to={`/admin/orders/${order._id}`} className="admin-btn admin-btn-outline admin-btn-xs">
+                        View <i className="fa-solid fa-eye" />
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

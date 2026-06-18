@@ -83,7 +83,7 @@ function AdminProducts() {
       </div>
 
       {/* ── Quick-filter badge pills ── */}
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
+      <div className="admin-badge-filters">
         {BADGE_FILTERS.map(f => (
           <button
             key={f.value}
@@ -141,85 +141,87 @@ function AdminProducts() {
           </div>
         ) : (
           <>
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th style={{ width: 56 }}>Image</th>
-                  <th>Name</th>
-                  <th>Category</th>
-                  <th>Badge</th>
-                  <th>Price</th>
-                  <th>Stock</th>
-                  <th>Flags</th>
-                  <th>Status</th>
-                  <th style={{ width: 120 }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map((p) => (
-                  <tr key={p._id}>
-                    <td>
-                      <img src={imgSrc(p.image)} alt={p.name} className="admin-product-img" />
-                    </td>
-                    <td>
-                      <div style={{ fontWeight: 600, fontSize: 13 }}>{p.name}</div>
-                      {p.sku && <div style={{ fontSize: 11, color: 'var(--text-light)', marginTop: 2 }}>SKU: {p.sku}</div>}
-                    </td>
-                    <td style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>
-                      {p.category?.name || '—'}
-                    </td>
-                    <td>
-                      {p.badge
-                        ? <span style={{ background: 'var(--primary-subtle)', color: 'var(--primary)', fontSize: 11, fontWeight: 600, padding: '3px 9px', borderRadius: 20 }}>{p.badge}</span>
-                        : <span style={{ color: 'var(--text-light)', fontSize: 12 }}>—</span>
-                      }
-                    </td>
-                    <td style={{ fontWeight: 700 }}>
-                      {p.hasPillsOptions && p.pillsOptions?.length > 0
-                        ? `$${Number(p.pillsOptions[0].price).toFixed(2)}+`
-                        : `$${Number(p.price || 0).toFixed(2)}`}
-                    </td>
-                    <td style={{ fontSize: 13 }}>
-                      {p.hasPillsOptions
-                        ? p.pillsOptions?.reduce((a, b) => a + Number(b.stock || 0), 0)
-                        : p.stock || 0}
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                        {p.isFeatured   && <span className="prod-flag feat">⭐</span>}
-                        {p.isNewArrival && <span className="prod-flag new">🆕</span>}
-                        {p.isBestSeller && <span className="prod-flag best">🔥</span>}
-                      </div>
-                    </td>
-                    <td>
-                      <span className={`status-badge ${p.isActive ? 'status-delivered' : 'status-cancelled'}`}>
-                        <i className={`fa-solid ${p.isActive ? 'fa-eye' : 'fa-eye-slash'}`} />
-                        {p.isActive ? 'Active' : 'Hidden'}
-                      </span>
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', gap: 5 }}>
-                        <button
-                          className="admin-btn admin-btn-outline admin-btn-xs"
-                          onClick={() => openEdit(p._id)}
-                          title="Edit"
-                        >
-                          <i className="fa-solid fa-pen" />
-                        </button>
-                        <button
-                          className="admin-btn admin-btn-danger admin-btn-xs"
-                          onClick={() => handleDelete(p._id)}
-                          disabled={deleting === p._id}
-                          title="Delete"
-                        >
-                          <i className={`fa-solid ${deleting === p._id ? 'fa-spinner fa-spin' : 'fa-trash'}`} />
-                        </button>
-                      </div>
-                    </td>
+            <div className="admin-table-wrap">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th style={{ width: 56 }}>Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Badge</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Flags</th>
+                    <th>Status</th>
+                    <th style={{ width: 120 }}>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {products.map((p) => (
+                    <tr key={p._id}>
+                      <td>
+                        <img src={imgSrc(p.image)} alt={p.name} className="admin-product-img" />
+                      </td>
+                      <td>
+                        <div style={{ fontWeight: 600, fontSize: 13 }}>{p.name}</div>
+                        {p.sku && <div style={{ fontSize: 11, color: 'var(--text-light)', marginTop: 2 }}>SKU: {p.sku}</div>}
+                      </td>
+                      <td style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>
+                        {p.category?.name || '—'}
+                      </td>
+                      <td>
+                        {p.badge
+                          ? <span style={{ background: 'var(--primary-subtle)', color: 'var(--primary)', fontSize: 11, fontWeight: 600, padding: '3px 9px', borderRadius: 20 }}>{p.badge}</span>
+                          : <span style={{ color: 'var(--text-light)', fontSize: 12 }}>—</span>
+                        }
+                      </td>
+                      <td style={{ fontWeight: 700 }}>
+                        {p.hasPillsOptions && p.pillsOptions?.length > 0
+                          ? `$${Number(p.pillsOptions[0].price).toFixed(2)}+`
+                          : `$${Number(p.price || 0).toFixed(2)}`}
+                      </td>
+                      <td style={{ fontSize: 13 }}>
+                        {p.hasPillsOptions
+                          ? p.pillsOptions?.reduce((a, b) => a + Number(b.stock || 0), 0)
+                          : p.stock || 0}
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                          {p.isFeatured   && <span className="prod-flag feat">⭐</span>}
+                          {p.isNewArrival && <span className="prod-flag new">🆕</span>}
+                          {p.isBestSeller && <span className="prod-flag best">🔥</span>}
+                        </div>
+                      </td>
+                      <td>
+                        <span className={`status-badge ${p.isActive ? 'status-delivered' : 'status-cancelled'}`}>
+                          <i className={`fa-solid ${p.isActive ? 'fa-eye' : 'fa-eye-slash'}`} />
+                          {p.isActive ? 'Active' : 'Hidden'}
+                        </span>
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', gap: 5 }}>
+                          <button
+                            className="admin-btn admin-btn-outline admin-btn-xs"
+                            onClick={() => openEdit(p._id)}
+                            title="Edit"
+                          >
+                            <i className="fa-solid fa-pen" />
+                          </button>
+                          <button
+                            className="admin-btn admin-btn-danger admin-btn-xs"
+                            onClick={() => handleDelete(p._id)}
+                            disabled={deleting === p._id}
+                            title="Delete"
+                          >
+                            <i className={`fa-solid ${deleting === p._id ? 'fa-spinner fa-spin' : 'fa-trash'}`} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
             {totalPages > 1 && (
               <div className="admin-pagination">

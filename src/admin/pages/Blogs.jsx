@@ -138,7 +138,7 @@ function AdminBlogs() {
                 <label>Title *</label>
                 <input name="title" value={form.title} onChange={handleChange} placeholder="Blog title..." required />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
+              <div className="admin-form-grid" style={{ gap: 14, marginBottom: 14 }}>
                 <div className="admin-form-group">
                   <label>Category</label>
                   <select name="category" value={form.category} onChange={handleChange}>
@@ -199,78 +199,80 @@ function AdminBlogs() {
             No blog posts yet. Click "New Post" to add one.
           </div>
         ) : (
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Image</th>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Author</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {blogs.map((blog) => {
-                const imgSrc = blog.image
-                  ? blog.image.startsWith('/uploads')
-                    ? `${import.meta.env.VITE_API_URL}${blog.image}`
-                    : blog.image
-                  : null
-                return (
-                  <tr key={blog._id}>
-                    <td>
-                      {imgSrc ? (
-                        <img src={imgSrc} alt={blog.title} className="admin-product-img" />
-                      ) : (
-                        <div style={{ width: 44, height: 44, background: 'var(--bg)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-light)', fontSize: 18 }}>
-                          <i className="fa-solid fa-file-lines" />
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Author</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {blogs.map((blog) => {
+                  const imgSrc = blog.image
+                    ? blog.image.startsWith('/uploads')
+                      ? `${import.meta.env.VITE_API_URL}${blog.image}`
+                      : blog.image
+                    : null
+                  return (
+                    <tr key={blog._id}>
+                      <td>
+                        {imgSrc ? (
+                          <img src={imgSrc} alt={blog.title} className="admin-product-img" />
+                        ) : (
+                          <div style={{ width: 44, height: 44, background: 'var(--bg)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-light)', fontSize: 18 }}>
+                            <i className="fa-solid fa-file-lines" />
+                          </div>
+                        )}
+                      </td>
+                      <td style={{ fontWeight: 600, maxWidth: 240 }}>
+                        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{blog.title}</div>
+                        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>
+                          <i className="fa-regular fa-eye" style={{ marginRight: 3 }} />{blog.views || 0} views
                         </div>
-                      )}
-                    </td>
-                    <td style={{ fontWeight: 600, maxWidth: 240 }}>
-                      <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{blog.title}</div>
-                      <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>
-                        <i className="fa-regular fa-eye" style={{ marginRight: 3 }} />{blog.views || 0} views
-                      </div>
-                    </td>
-                    <td>
-                      <span style={{ background: '#e0e7ff', color: '#3730a3', fontSize: 12, fontWeight: 600, padding: '3px 10px', borderRadius: 10 }}>
-                        {blog.category}
-                      </span>
-                    </td>
-                    <td style={{ fontSize: 13 }}>{blog.author}</td>
-                    <td>
-                      <span className={`status-badge ${blog.isPublished ? 'status-delivered' : 'status-cancelled'}`}>
-                        <i className={`fa-solid ${blog.isPublished ? 'fa-circle-check' : 'fa-circle-pause'}`} style={{ marginRight: 4 }} />
-                        {blog.isPublished ? 'Published' : 'Draft'}
-                      </span>
-                    </td>
-                    <td style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-                      <i className="fa-regular fa-calendar" style={{ marginRight: 5 }} />
-                      {new Date(blog.createdAt).toLocaleDateString()}
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', gap: 6 }}>
-                        <button className="admin-btn admin-btn-outline admin-btn-xs" onClick={() => openEdit(blog)}>
-                          <i className="fa-solid fa-pen" /> Edit
-                        </button>
-                        <button
-                          className="admin-btn admin-btn-danger admin-btn-xs"
-                          onClick={() => handleDelete(blog._id)}
-                          disabled={deleting === blog._id}
-                        >
-                          <i className={`fa-solid ${deleting === blog._id ? 'fa-spinner fa-spin' : 'fa-trash'}`} />
-                          {deleting === blog._id ? '' : 'Delete'}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+                      </td>
+                      <td>
+                        <span style={{ background: '#e0e7ff', color: '#3730a3', fontSize: 12, fontWeight: 600, padding: '3px 10px', borderRadius: 10 }}>
+                          {blog.category}
+                        </span>
+                      </td>
+                      <td style={{ fontSize: 13 }}>{blog.author}</td>
+                      <td>
+                        <span className={`status-badge ${blog.isPublished ? 'status-delivered' : 'status-cancelled'}`}>
+                          <i className={`fa-solid ${blog.isPublished ? 'fa-circle-check' : 'fa-circle-pause'}`} style={{ marginRight: 4 }} />
+                          {blog.isPublished ? 'Published' : 'Draft'}
+                        </span>
+                      </td>
+                      <td style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+                        <i className="fa-regular fa-calendar" style={{ marginRight: 5 }} />
+                        {new Date(blog.createdAt).toLocaleDateString()}
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <button className="admin-btn admin-btn-outline admin-btn-xs" onClick={() => openEdit(blog)}>
+                            <i className="fa-solid fa-pen" /> Edit
+                          </button>
+                          <button
+                            className="admin-btn admin-btn-danger admin-btn-xs"
+                            onClick={() => handleDelete(blog._id)}
+                            disabled={deleting === blog._id}
+                          >
+                            <i className={`fa-solid ${deleting === blog._id ? 'fa-spinner fa-spin' : 'fa-trash'}`} />
+                            {deleting === blog._id ? '' : 'Delete'}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

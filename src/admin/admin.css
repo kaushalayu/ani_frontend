@@ -521,6 +521,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .admin-page-header h1 i { color: var(--primary); }
@@ -636,10 +637,16 @@ body {
 .admin-table-header h2 i { color: var(--primary); }
 
 /* ── Table ── */
+.admin-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .admin-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
+  min-width: 680px;
 }
 
 .admin-table th {
@@ -669,6 +676,29 @@ body {
 }
 
 .admin-table tbody tr:hover td { background: #f8fafc; }
+
+/* ── Badge filter pills ── */
+.admin-badge-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 576px) {
+  .admin-badge-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    gap: 6px;
+  }
+  .admin-badge-filters button {
+    flex-shrink: 0;
+    font-size: 12px;
+    padding: 5px 14px;
+  }
+}
 
 /* ── Search Bar ── */
 .admin-search-bar {
@@ -1167,6 +1197,15 @@ body {
 .order-info-line:last-child { border-bottom: none; }
 .order-info-line span:first-child { color: var(--text-secondary); }
 
+.card-details-box {
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
 
 /* ════════════════════════════════════════
    CONTACT MESSAGES
@@ -1174,6 +1213,11 @@ body {
 
 .contact-messages-grid { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
 .contact-messages-grid.has-selected { grid-template-columns: 1fr 420px; }
+
+@media (max-width: 992px) {
+  .contact-messages-grid.has-selected .message-detail-card { grid-template-columns: 1fr; }
+  .contact-messages-grid.has-selected .message-detail-card .detail-grid { grid-template-columns: 1fr; }
+}
 
 
 /* ════════════════════════════════════════
@@ -1189,6 +1233,18 @@ body {
 }
 
 .admin-mobile-overlay.show { display: block; }
+
+/* ── Contact Messages - message list item ── */
+.contact-message-item .msg-actions { gap: 4px; }
+.contact-message-item .msg-actions .admin-btn { padding: 3px 7px; font-size: 11px; }
+
+@media (max-width: 768px) {
+  .contact-message-item { flex-wrap: wrap; gap: 8px; }
+  .contact-message-item .msg-main { width: 100%; }
+  .contact-message-item .msg-actions { width: 100%; justify-content: flex-end; }
+  .contact-filter-tabs { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 0 14px 12px; gap: 4px; }
+  .contact-filter-tabs button { font-size: 12px; padding: 6px 12px; white-space: nowrap; flex-shrink: 0; }
+}
 
 
 /* ════════════════════════════════════════
@@ -1269,6 +1325,7 @@ body {
   .order-detail-grid { grid-template-columns: 1fr; }
   .contact-messages-grid.has-selected { grid-template-columns: 1fr; }
   .admin-topbar-search { max-width: 200px; }
+  .message-list-item .action-btns { flex-direction: column; gap: 4px; }
 }
 
 /* 992px */
@@ -1287,7 +1344,7 @@ body {
   .admin-table th, .admin-table td { padding: 10px 13px; }
 }
 
-/* 768px — mobile breakpoint */
+  /* 768px — mobile breakpoint */
 @media (max-width: 768px) {
   /* Sidebar becomes off-canvas */
   .admin-sidebar {
@@ -1320,13 +1377,12 @@ body {
   .admin-stat-info h3 { font-size: 18px; }
   .admin-stat-info p  { font-size: 11px; }
 
-  .admin-table { font-size: 12px; }
+  .admin-table { font-size: 12px; min-width: 600px; }
   .admin-table th, .admin-table td { padding: 9px 11px; }
 
-  /* Hide less important columns on mobile */
-  .admin-table .hide-mobile { display: none; }
-
   .admin-form-card { padding: 18px; }
+  .detail-grid { grid-template-columns: 1fr !important; }
+  .admin-stats-grid { grid-template-columns: repeat(2, 1fr); }
   .admin-modal { padding: 20px; margin: 10px; }
   .admin-user-info .admin-role-badge { display: none; }
   .admin-user-info .admin-user-name { display: none; }
@@ -1337,10 +1393,22 @@ body {
   .admin-dashboard-hero h1 { font-size: 18px; }
 }
 
+/* 768px - Order detail status buttons */
+@media (max-width: 768px) {
+  .order-detail-grid .status-buttons-wrap {
+    flex-direction: column;
+  }
+  .order-detail-grid .status-buttons-wrap button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 /* 576px */
 @media (max-width: 576px) {
   .admin-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
   .admin-stat-card { flex-direction: column; align-items: flex-start; gap: 10px; padding: 14px; }
+  .admin-stat-icon { width: 36px; height: 36px; font-size: 15px; border-radius: 10px; }
   .admin-stat-icon { width: 38px; height: 38px; font-size: 16px; border-radius: 10px; }
   .admin-stat-info h3 { font-size: 20px; }
   .admin-stat-info p  { font-size: 10.5px; }
@@ -1349,12 +1417,19 @@ body {
   .admin-form-card { padding: 14px; }
   .admin-form-actions { flex-direction: column; }
   .admin-form-actions .admin-btn { width: 100%; justify-content: center; }
-  .admin-table th:nth-child(n+5), .admin-table td:nth-child(n+5) { display: none; }
-  .admin-search-bar { padding: 10px 12px; gap: 8px; }
+  .admin-table { min-width: 520px; }
+  .admin-search-bar { padding: 10px 12px; gap: 8px; flex-direction: column; }
+  .admin-search-bar input { width: 100%; }
   .admin-search-bar select { width: 100%; }
   .admin-pagination { justify-content: center; flex-wrap: wrap; }
   .admin-modal { padding: 16px; margin: 8px; border-radius: var(--r-lg); }
   .admin-page-header h1 { font-size: 15px; }
+  .admin-page-header { flex-direction: column; align-items: stretch; }
+  .admin-page-header .admin-btn { width: 100%; justify-content: center; }
+  .admin-visit-site span { display: none; }
+  .admin-stat-info h3 { font-size: 18px; }
+  .admin-form-grid { grid-template-columns: 1fr; }
+  .admin-form-card { padding: 12px; }
 }
 
 /* 400px */
@@ -1364,5 +1439,7 @@ body {
   .admin-content { padding: 8px 10px; }
   .admin-topbar { padding: 0 10px; }
   .admin-user-info { padding: 4px 8px 4px 4px; }
-  .admin-table th:nth-child(n+4), .admin-table td:nth-child(n+4) { display: none; }
+  .admin-table { min-width: 400px; }
+  .admin-page-header h1 { font-size: 14px; }
+  .admin-stat-info h3 { font-size: 17px; }
 }

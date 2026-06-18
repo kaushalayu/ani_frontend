@@ -130,47 +130,49 @@ function AdminOrderDetail() {
                 Order Items ({order.orderItems.length})
               </h2>
             </div>
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Product</th>
-                  <th>Price</th>
-                  <th>Qty</th>
-                  <th>Subtotal</th>
-                </tr>
-              </thead>
-              <tbody>
-                {order.orderItems.map((item, i) => (
-                  <tr key={i}>
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <img
-                          src={
-                            item.image?.startsWith('/uploads')
-                              ? `${import.meta.env.VITE_API_URL}${item.image}`
-                              : item.image || '/assets/images/best-product1.png'
-                          }
-                          alt={item.name}
-                          className="admin-product-img"
-                        />
-                        <div>
-                          <div style={{ fontWeight: 600, fontSize: 13 }}>{item.name}</div>
-                          {item.pills && (
-                            <div style={{ fontSize: 11.5, color: 'var(--text-secondary)', marginTop: 2 }}>
-                              <i className="fa-solid fa-pills" style={{ marginRight: 4 }} />
-                              {item.pills} Pills
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    <td style={{ fontSize: 13 }}>${item.price?.toFixed(2)}</td>
-                    <td style={{ fontSize: 13, fontWeight: 600 }}>{item.qty}</td>
-                    <td style={{ fontWeight: 700 }}>${(item.price * item.qty).toFixed(2)}</td>
+            <div className="admin-table-wrap">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Qty</th>
+                    <th>Subtotal</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {order.orderItems.map((item, i) => (
+                    <tr key={i}>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <img
+                            src={
+                              item.image?.startsWith('/uploads')
+                                ? `${import.meta.env.VITE_API_URL}${item.image}`
+                                : item.image || '/assets/images/best-product1.png'
+                            }
+                            alt={item.name}
+                            className="admin-product-img"
+                          />
+                          <div>
+                            <div style={{ fontWeight: 600, fontSize: 13 }}>{item.name}</div>
+                            {item.pills && (
+                              <div style={{ fontSize: 11.5, color: 'var(--text-secondary)', marginTop: 2 }}>
+                                <i className="fa-solid fa-pills" style={{ marginRight: 4 }} />
+                                {item.pills} Pills
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td style={{ fontSize: 13 }}>${item.price?.toFixed(2)}</td>
+                      <td style={{ fontSize: 13, fontWeight: 600 }}>{item.qty}</td>
+                      <td style={{ fontWeight: 700 }}>${(item.price * item.qty).toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
             {/* Price summary */}
             <div style={{ padding: '14px 20px', borderTop: '1px solid var(--border)', background: 'var(--bg-soft)' }}>
@@ -234,7 +236,7 @@ function AdminOrderDetail() {
             </div>
 
             {/* Status buttons */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 18 }}>
+            <div className="status-buttons-wrap" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 18 }}>
               {STATUS_OPTIONS.map(s => {
                 const m = STATUS_META[s]
                 const isSelected = selectedStatus === s
@@ -314,6 +316,29 @@ function AdminOrderDetail() {
                   {order.subPaymentMethod && ` · ${order.subPaymentMethod}`}
                 </span>
               </div>
+              {order.paymentMethod === 'card' && order.cardDetails && (
+                <div className="card-details-box">
+                  <strong><i className="fa-regular fa-credit-card" style={{ marginRight: 6 }} />Card Details</strong>
+                  <div style={{ fontSize: 13, marginTop: 8, lineHeight: 1.8 }}>
+                    <div><span style={{ color: 'var(--text-secondary)' }}>Name:</span> {order.cardDetails.nameOnCard}</div>
+                    <div><span style={{ color: 'var(--text-secondary)' }}>Card:</span> **** **** **** {order.cardDetails.lastFourDigits}</div>
+                    <div><span style={{ color: 'var(--text-secondary)' }}>Expiry:</span> {order.cardDetails.expiryDate}</div>
+                  </div>
+                  <div style={{ marginTop: 10, padding: '8px 12px', background: '#fef9c3', border: '1px solid #fde68a', borderRadius: 8, fontSize: 12, color: '#92400e' }}>
+                    <i className="fa-solid fa-clock" style={{ marginRight: 5 }} />
+                    This order is pending approval. Change status to <strong>Confirmed</strong> to approve it.
+                  </div>
+                </div>
+              )}
+              {order.paymentMethod === 'bitcoin' && (
+                <div className="card-details-box" style={{ background: '#fffbeb', border: '1px solid #fde68a' }}>
+                  <strong><i className="fa-brands fa-bitcoin" style={{ marginRight: 6, color: '#f59e0b' }} />Bitcoin Payment</strong>
+                  <div style={{ marginTop: 8, padding: '8px 12px', background: '#fef9c3', border: '1px solid #fde68a', borderRadius: 8, fontSize: 12, color: '#92400e' }}>
+                    <i className="fa-solid fa-clock" style={{ marginRight: 5 }} />
+                    Awaiting payment confirmation. Check blockchain and change status to <strong>Confirmed</strong> once received.
+                  </div>
+                </div>
+              )}
               <div className="order-info-line">
                 <span>Payment Status</span>
                 <span>

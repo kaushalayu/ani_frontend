@@ -153,45 +153,47 @@ function AdminFaqs() {
             </button>
           </div>
         ) : (
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th style={{ width: 50 }}>#</th>
-                <th>Question</th>
-                <th>Answer</th>
-                <th>Order</th>
-                <th>Status</th>
-                <th style={{ width: 110 }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {list.map((f, i) => (
-                <tr key={f._id}>
-                  <td style={{ color: 'var(--text-light)' }}>{i + 1}</td>
-                  <td style={{ fontWeight: 600 }}>{f.question}</td>
-                  <td style={{ maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-secondary)' }}>
-                    {f.answer}
-                  </td>
-                  <td>{f.order}</td>
-                  <td>
-                    <span className={`status-badge ${f.isActive ? 'status-delivered' : 'status-cancelled'}`}>
-                      {f.isActive ? 'Active' : 'Hidden'}
-                    </span>
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', gap: 5 }}>
-                      <button className="admin-btn admin-btn-outline admin-btn-xs" onClick={() => openEdit(f._id)} title="Edit">
-                        <i className="fa-solid fa-pen" />
-                      </button>
-                      <button className="admin-btn admin-btn-danger admin-btn-xs" onClick={() => handleDelete(f._id)} disabled={deleting === f._id} title="Delete">
-                        <i className={`fa-solid ${deleting === f._id ? 'fa-spinner fa-spin' : 'fa-trash'}`} />
-                      </button>
-                    </div>
-                  </td>
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th style={{ width: 50 }}>#</th>
+                  <th>Question</th>
+                  <th>Answer</th>
+                  <th>Order</th>
+                  <th>Status</th>
+                  <th style={{ width: 110 }}>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {list.map((f, i) => (
+                  <tr key={f._id}>
+                    <td style={{ color: 'var(--text-light)' }}>{i + 1}</td>
+                    <td style={{ fontWeight: 600 }}>{f.question}</td>
+                    <td style={{ maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-secondary)' }}>
+                      {f.answer}
+                    </td>
+                    <td>{f.order}</td>
+                    <td>
+                      <span className={`status-badge ${f.isActive ? 'status-delivered' : 'status-cancelled'}`}>
+                        {f.isActive ? 'Active' : 'Hidden'}
+                      </span>
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', gap: 5 }}>
+                        <button className="admin-btn admin-btn-outline admin-btn-xs" onClick={() => openEdit(f._id)} title="Edit">
+                          <i className="fa-solid fa-pen" />
+                        </button>
+                        <button className="admin-btn admin-btn-danger admin-btn-xs" onClick={() => handleDelete(f._id)} disabled={deleting === f._id} title="Delete">
+                          <i className={`fa-solid ${deleting === f._id ? 'fa-spinner fa-spin' : 'fa-trash'}`} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>
