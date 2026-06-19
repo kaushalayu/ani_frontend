@@ -138,7 +138,7 @@ function AdminBlogs() {
                 <label>Title *</label>
                 <input name="title" value={form.title} onChange={handleChange} placeholder="Blog title..." required />
               </div>
-              <div className="admin-form-grid" style={{ gap: 14, marginBottom: 14 }}>
+              <div className="admin-form-grid blog-form-grid" style={{ gap: 14, marginBottom: 14 }}>
                 <div className="admin-form-group">
                   <label>Category</label>
                   <select name="category" value={form.category} onChange={handleChange}>

@@ -142,7 +142,7 @@ function AdminUsers() {
                       </td>
                       <td>
                         {u._id !== currentUser?._id ? (
-                          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                          <div className="user-action-btns" style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                             <button
                               className="admin-btn admin-btn-outline admin-btn-xs"
                               onClick={() => handleRoleToggle(u._id, u.role)}

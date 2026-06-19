@@ -93,7 +93,7 @@ function AdminOrderDetail() {
           <i className="fa-solid fa-receipt" />
           Order #{order._id.slice(-8).toUpperCase()}
         </h1>
-        <div style={{ display: 'flex', gap: 10 }}>
+        <div className="order-page-header-actions" style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <span className={`status-badge ${meta.cls}`} style={{ fontSize: 13, padding: '6px 16px' }}>
             <i className={`fa-solid ${meta.icon}`} style={{ marginRight: 6 }} />
             {meta.label}

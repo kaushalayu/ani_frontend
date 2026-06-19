@@ -231,7 +231,7 @@ function ProductForm() {
           {form.hasPillsOptions ? (
             <div>
               {form.pillsOptions.map((opt, i) => (
-                <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr auto', gap: 10, marginBottom: 10, alignItems: 'end' }}>
+                <div key={i} className="pills-option-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr auto', gap: 10, marginBottom: 10, alignItems: 'end' }}>
                   <div className="admin-form-group">
                     {i === 0 && <label>Count</label>}
                     <input type="number" placeholder="e.g. 30" value={opt.count} onChange={(e) => handlePillsOptionChange(i, 'count', e.target.value)} />

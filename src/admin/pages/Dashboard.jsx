@@ -81,7 +81,7 @@ function Dashboard() {
       <div className="admin-table-card">
         <div className="admin-table-header">
           <h2><i className="fa-solid fa-clock-rotate-left" />Recent Orders</h2>
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div className="dashboard-table-actions" style={{ display: 'flex', gap: 8 }}>
             {stats?.unreadContactCount > 0 && (
               <Link to="/admin/messages" className="admin-btn admin-btn-primary admin-btn-sm">
                 <i className="fa-solid fa-envelope" /> {stats.unreadContactCount} Unread

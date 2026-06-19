@@ -235,7 +235,7 @@ function ContactMessages() {
           <i className={`fa-solid${contact.isStarred ? '' : '-regular'} fa-star`} />
         </button>
 
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div className="msg-main" style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
             <span style={{
               width: 28, height: 28, borderRadius: '50%',
@@ -318,7 +318,7 @@ function ContactMessages() {
         border: '1px solid var(--border)', boxShadow: 'var(--shadow)',
         overflow: 'hidden',
       }}>
-        <div style={{
+        <div className="msg-detail-header" style={{
           padding: '20px 24px', borderBottom: '1px solid var(--border)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
@@ -345,7 +345,7 @@ function ContactMessages() {
         </div>
 
         <div style={{ padding: '24px' }}>
-          <div className="detail-grid" style={{
+          <div className="detail-grid contact-detail-grid" style={{
             display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20,
           }}>
             <div>
@@ -395,9 +395,9 @@ function ContactMessages() {
             </p>
           </div>
 
-          <div style={{
-            display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap',
-          }}>
+          <div className="modal-reply-actions" style={{
+              display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap',
+            }}>
             <a
               href={`mailto:${selected.email}?subject=Re: ${SUBJECT_LABELS[selected.subject] || 'Your Message'}`}
               className="admin-btn admin-btn-primary"
@@ -447,7 +447,7 @@ function ContactMessages() {
               </div>
             </div>
 
-            <div style={{
+            <div className="msg-modal-info" style={{
               display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16,
             }}>
               <div style={{ fontSize: 12, color: 'var(--text-light)' }}>
@@ -477,7 +477,7 @@ function ContactMessages() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div className="modal-reply-actions" style={{ display: 'flex', gap: 10 }}>
             <a
               href={`mailto:${fullMessage.email}?subject=Re: ${SUBJECT_LABELS[fullMessage.subject] || 'Your Message'}`}
               className="admin-btn admin-btn-primary"
@@ -516,7 +516,7 @@ function ContactMessages() {
 
       <Stats />
 
-      <div className={`contact-messages-grid${selected ? ' has-selected' : ''}`} style={{ gap: 22, alignItems: 'start' }}>
+      <div className={`contact-messages-grid${selected ? ' has-selected' : ''}`} style={{ gap: 22, alignItems: 'start', display: 'grid' }}>
         <div className="admin-table-card" style={{ marginBottom: 0 }}>
           <FilterTabs />
           <SearchBar />

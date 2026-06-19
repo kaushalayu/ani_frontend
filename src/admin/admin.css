@@ -1238,6 +1238,44 @@ body {
 .contact-message-item .msg-actions { gap: 4px; }
 .contact-message-item .msg-actions .admin-btn { padding: 3px 7px; font-size: 11px; }
 
+/* ── User action buttons responsive ── */
+@media (max-width: 768px) {
+  .user-action-btns { flex-direction: column; width: 100%; }
+  .user-action-btns .admin-btn { width: 100%; justify-content: center; }
+}
+
+/* ── Dashboard table actions ── */
+@media (max-width: 576px) {
+  .dashboard-table-actions { flex-direction: column; width: 100%; }
+  .dashboard-table-actions .admin-btn { width: 100%; justify-content: center; text-align: center; }
+}
+
+/* ── Order page header actions ── */
+@media (max-width: 576px) {
+  .order-page-header-actions { flex-direction: column; width: 100%; }
+  .order-page-header-actions .admin-btn,
+  .order-page-header-actions .status-badge { width: 100%; justify-content: center; text-align: center; }
+}
+
+/* ── Badge mapping items responsive ── */
+.badge-mapping-items { display: flex; gap: 12px; flex-wrap: wrap; }
+@media (max-width: 576px) {
+  .badge-mapping-items { flex-direction: column; }
+  .badge-mapping-items span { width: 100%; }
+}
+
+/* ── Admin modal form grids ── */
+@media (max-width: 576px) {
+  .admin-modal .admin-form-grid.blog-form-grid { grid-template-columns: 1fr; }
+  .admin-modal .admin-form-grid.blog-form-grid input,
+  .admin-modal .admin-form-grid.blog-form-grid select { font-size: 16px; }
+}
+
+/* ── Pills option row (ProductForm) ── */
+.pills-option-row { display: grid; gap: 10px; margin-bottom: 10px; align-items: end; }
+@media (max-width: 992px) { .pills-option-row { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 576px) { .pills-option-row { grid-template-columns: 1fr; } }
+
 @media (max-width: 768px) {
   .contact-message-item { flex-wrap: wrap; gap: 8px; }
   .contact-message-item .msg-main { width: 100%; }
@@ -1317,6 +1355,7 @@ body {
   .admin-topbar-search { max-width: 240px; }
   .admin-stats-grid { grid-template-columns: repeat(4, 1fr); }
   .order-detail-grid { grid-template-columns: 1fr 320px; }
+  .contact-messages-grid.has-selected { grid-template-columns: 1fr 380px; }
 }
 
 /* 1200px */
@@ -1326,6 +1365,9 @@ body {
   .contact-messages-grid.has-selected { grid-template-columns: 1fr; }
   .admin-topbar-search { max-width: 200px; }
   .message-list-item .action-btns { flex-direction: column; gap: 4px; }
+  .admin-form-grid.pills-grid { grid-template-columns: 1fr 1fr; }
+  .admin-table-card .detail-grid { grid-template-columns: 1fr 1fr; }
+  .admin-form-card .contact-detail-grid { grid-template-columns: 1fr; }
 }
 
 /* 992px */
@@ -1334,6 +1376,7 @@ body {
 
   .admin-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .admin-form-grid  { grid-template-columns: 1fr; }
+  .admin-form-grid.pills-grid { grid-template-columns: 1fr; }
   .admin-content    { padding: 18px 20px; }
   .admin-topbar     { padding: 0 18px; }
   .admin-topbar-search { display: none; }
@@ -1342,6 +1385,7 @@ body {
   .admin-stat-info h3 { font-size: 20px; }
   .admin-table      { font-size: 12.5px; }
   .admin-table th, .admin-table td { padding: 10px 13px; }
+  .admin-table-card .detail-grid { grid-template-columns: 1fr; }
 }
 
   /* 768px — mobile breakpoint */
@@ -1382,7 +1426,6 @@ body {
 
   .admin-form-card { padding: 18px; }
   .detail-grid { grid-template-columns: 1fr !important; }
-  .admin-stats-grid { grid-template-columns: repeat(2, 1fr); }
   .admin-modal { padding: 20px; margin: 10px; }
   .admin-user-info .admin-role-badge { display: none; }
   .admin-user-info .admin-user-name { display: none; }
@@ -1391,17 +1434,27 @@ body {
   .admin-nav-section-label { display: none; }
   .admin-dashboard-hero { padding: 22px 20px; }
   .admin-dashboard-hero h1 { font-size: 18px; }
-}
 
-/* 768px - Order detail status buttons */
-@media (max-width: 768px) {
-  .order-detail-grid .status-buttons-wrap {
-    flex-direction: column;
-  }
-  .order-detail-grid .status-buttons-wrap button {
-    width: 100%;
-    justify-content: center;
-  }
+  /* Contact Messages - detail grid in selected view */
+  .contact-messages-grid { grid-template-columns: 1fr !important; }
+  .contact-messages-grid .detail-grid { grid-template-columns: 1fr !important; }
+
+  /* Order detail */
+  .order-detail-grid .status-buttons-wrap { flex-direction: column; }
+  .order-detail-grid .status-buttons-wrap button { width: 100%; justify-content: center; }
+
+  /* Product form pills grid */
+  .pills-option-row { grid-template-columns: 1fr 1fr; }
+
+  /* Full message modal responsive */
+  .admin-modal .msg-modal-info { flex-direction: column; gap: 8px; }
+  .admin-modal .msg-modal-info > div { flex-wrap: wrap; }
+
+  /* SEO form */
+  .admin-form-group input, .admin-form-group select, .admin-form-group textarea { font-size: 16px; }
+
+  /* Flags grid */
+  .admin-flag-label { flex: 1; }
 }
 
 /* 576px */
@@ -1430,6 +1483,38 @@ body {
   .admin-stat-info h3 { font-size: 18px; }
   .admin-form-grid { grid-template-columns: 1fr; }
   .admin-form-card { padding: 12px; }
+
+  /* Product form - pills rows */
+  .pills-option-row { grid-template-columns: 1fr; gap: 8px; }
+  .pills-option-row .admin-form-group { margin-bottom: 0; }
+
+  /* Order detail header */
+  .order-detail-grid .admin-page-header { flex-direction: column; align-items: flex-start; }
+  .order-detail-grid .admin-page-header > div { flex-wrap: wrap; gap: 6px; }
+
+  /* Contact message detail */
+  .contact-messages-grid .msg-detail-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .contact-messages-grid .msg-detail-header > div { width: 100%; }
+
+  /* Message item */
+  .contact-message-item { flex-wrap: wrap; }
+  .contact-message-item .msg-main { width: 100%; }
+  .contact-message-item .msg-actions { width: 100%; justify-content: flex-end; margin-top: 4px; }
+
+  /* Admin modal */
+  .admin-modal .modal-reply-actions { flex-direction: column; }
+  .admin-modal .modal-reply-actions .admin-btn { width: 100%; justify-content: center; }
+
+  /* Blog form */
+  .admin-modal .blog-form-grid { grid-template-columns: 1fr; }
+
+  /* Badge mapping info */
+  .admin-form-card .badge-mapping-wrap { flex-direction: column; gap: 8px; }
+  .admin-form-card .badge-mapping-wrap span { width: 100%; }
+
+  /* Product flags */
+  .admin-form-card .flags-wrap { flex-direction: column; }
+  .admin-form-card .flags-wrap .admin-flag-label { width: 100%; }
 }
 
 /* 400px */
@@ -1439,7 +1524,22 @@ body {
   .admin-content { padding: 8px 10px; }
   .admin-topbar { padding: 0 10px; }
   .admin-user-info { padding: 4px 8px 4px 4px; }
-  .admin-table { min-width: 400px; }
+  .admin-table { min-width: 400px; font-size: 11.5px; }
+  .admin-table th, .admin-table td { padding: 7px 8px; }
+  .admin-table th { font-size: 10px; }
   .admin-page-header h1 { font-size: 14px; }
   .admin-stat-info h3 { font-size: 17px; }
+  .admin-form-card { padding: 10px; }
+  .admin-form-card .admin-section-title { font-size: 13px; }
+  .admin-modal { padding: 12px; margin: 6px; }
+  .admin-modal-header h2 { font-size: 15px; }
+  .admin-modal .admin-form-grid { gap: 10px; }
+  .admin-btn { font-size: 11.5px; padding: 7px 14px; }
+  .admin-btn-sm { font-size: 11px; padding: 5px 10px; }
+  .admin-topbar-search { display: none; }
+  .admin-dashboard-hero { padding: 16px 14px; }
+  .admin-dashboard-hero h1 { font-size: 16px; }
+  .admin-dashboard-hero p { font-size: 12px; }
+  .admin-pagination button { min-width: 28px; height: 28px; font-size: 11px; }
+  .pills-option-row { grid-template-columns: 1fr; }
 }

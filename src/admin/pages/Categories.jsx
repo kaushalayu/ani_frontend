@@ -108,19 +108,19 @@ function AdminCategories() {
       )}
 
       {/* Info box about badge system */}
-      <div style={{
+      <div className="badge-mapping-wrap" style={{
         background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 12,
         padding: '14px 18px', marginBottom: 22,
         display: 'flex', gap: 12, alignItems: 'flex-start',
       }}>
         <i className="fa-solid fa-circle-info" style={{ color: '#f59e0b', fontSize: 18, marginTop: 2, flexShrink: 0 }} />
-        <div>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <strong style={{ fontSize: 13, color: '#92400e' }}>Product → Category Badge Mapping:</strong>
           <p style={{ fontSize: 12.5, color: '#78350f', margin: '4px 0 0' }}>
             Products appear in Navbar submenus based on their <strong>Badge</strong> field, not category name.
             When adding a product, set the badge accordingly:
           </p>
-          <div style={{ display: 'flex', gap: 12, marginTop: 8, flexWrap: 'wrap' }}>
+          <div className="badge-mapping-items" style={{ display: 'flex', gap: 12, marginTop: 8, flexWrap: 'wrap' }}>
             {Object.entries(BADGE_HINTS).map(([cat, hint]) => (
               <span key={cat} style={{
                 display: 'inline-flex', alignItems: 'center', gap: 5,
