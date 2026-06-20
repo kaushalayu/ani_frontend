@@ -125,31 +125,14 @@
 
 /* ========== HERO SECTION (Mobile-First) ========== */
 .hero-section {
-    background: linear-gradient(135deg, #5c45bf 0%, #7c5ce7 50%, #a78bfa 100%);
+    background: linear-gradient(135deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.25) 100%), url('/assets/hospital.webp') center/cover no-repeat;
     min-height: 520px;
     padding: 60px 20px 50px;
     overflow: hidden;
     position: relative;
 }
 .hero-bg-circle {
-    position: absolute;
-    border-radius: 50%;
-    opacity: 0.12;
-    pointer-events: none;
-}
-.hero-bg-circle-1 {
-    width: 400px;
-    height: 400px;
-    background: #fff;
-    top: -120px;
-    right: -100px;
-}
-.hero-bg-circle-2 {
-    width: 250px;
-    height: 250px;
-    background: #fdf485;
-    bottom: -60px;
-    left: -80px;
+    display: none;
 }
 .hero-content {
     text-align: center;
